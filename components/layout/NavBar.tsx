@@ -7,8 +7,8 @@ import { useEffect, useRef, useState } from "react";
 
 const navItems = [
   { href: "/", label: "Work" },
-  { href: "#connect", label: "About" },
   { href: "#resume", label: "Resume" },
+  { href: "#connect", label: "About" },
 ];
 
 // 将 logo 内联为 SVG，方便在悬浮时对内部字母做轻微错位移动。
