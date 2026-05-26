@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const navItems = [
   { href: "/", label: "Work" },
@@ -15,6 +15,8 @@ export function NavBar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [activeHref, setActiveHref] = useState("/");
+  const [isHidden, setIsHidden] = useState(false);
+  const lastScrollY = useRef(0);
 
   function closeMenu() {
     setIsOpen(false);
@@ -33,14 +35,69 @@ export function NavBar() {
     return () => window.removeEventListener("hashchange", syncActiveHref);
   }, [pathname]);
 
+  // 根据滚动方向控制导航显隐：下滑隐藏，上滑显示，并过滤细小滚动避免抖动。
+  useEffect(() => {
+    let animationFrameId = 0;
+
+    function updateNavVisibility() {
+      const currentScrollY = window.scrollY;
+      const scrollDelta = currentScrollY - lastScrollY.current;
+
+      if (isOpen) {
+        setIsHidden(false);
+        lastScrollY.current = currentScrollY;
+        animationFrameId = 0;
+        return;
+      }
+
+      if (Math.abs(scrollDelta) > 8) {
+        setIsHidden(scrollDelta > 0 && currentScrollY > 96);
+        lastScrollY.current = currentScrollY;
+      }
+
+      animationFrameId = 0;
+    }
+
+    function handleScroll() {
+      if (animationFrameId) {
+        return;
+      }
+
+      animationFrameId = window.requestAnimationFrame(updateNavVisibility);
+    }
+
+    lastScrollY.current = window.scrollY;
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (animationFrameId) {
+        window.cancelAnimationFrame(animationFrameId);
+      }
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsHidden(false);
+    }
+  }, [isOpen]);
+
   return (
-    <header className="relative z-10 bg-blush font-nav">
+    <header
+      className={`sticky top-0 z-20 bg-white font-nav transform-gpu transition-[transform,opacity] duration-300 ease-out will-change-transform ${
+        isHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
+      }`}
+    >
       <div className="mx-auto flex h-24 w-full max-w-site items-start justify-between px-4 py-8">
         <Link
           href="/"
           aria-label="Back to home"
           className="relative block h-[30px] w-[200px]"
-          onClick={closeMenu}
+          onClick={() => {
+            setActiveHref("/");
+            closeMenu();
+          }}
         >
           <Image
             src="/logo-cathrine.svg"
@@ -94,7 +151,7 @@ export function NavBar() {
 
       <div
         id="mobile-menu"
-        className={`absolute left-0 right-0 top-full bg-blush px-4 pb-8 transition duration-200 md:hidden ${
+        className={`absolute left-0 right-0 top-full bg-white px-4 pb-8 transition duration-200 md:hidden ${
           isOpen
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none -translate-y-2 opacity-0"
