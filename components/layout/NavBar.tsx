@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const navItems = [
   { href: "/", label: "Work" },
@@ -11,11 +12,26 @@ const navItems = [
 ];
 
 export function NavBar() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [activeHref, setActiveHref] = useState("/");
 
   function closeMenu() {
     setIsOpen(false);
   }
+
+  // 根据当前路径和锚点同步导航选中态，让下划线在选中项上保持常驻。
+  useEffect(() => {
+    function syncActiveHref() {
+      const currentHash = window.location.hash;
+      setActiveHref(currentHash || pathname || "/");
+    }
+
+    syncActiveHref();
+    window.addEventListener("hashchange", syncActiveHref);
+
+    return () => window.removeEventListener("hashchange", syncActiveHref);
+  }, [pathname]);
 
   return (
     <header className="relative z-10 bg-blush font-nav">
@@ -39,13 +55,23 @@ export function NavBar() {
 
         <nav aria-label="Primary navigation">
           <ul className="hidden items-start text-[20px] font-medium leading-7 tracking-[-0.5px] text-neutral-600 md:flex">
-            {navItems.map((item) => (
-              <li key={item.href} className="pl-9 first:pl-0">
-                <Link className="transition hover:text-ink" href={item.href}>
-                  {item.label}
-                </Link>
-              </li>
-            ))}
+            {navItems.map((item) => {
+              const isActive = activeHref === item.href;
+
+              return (
+                <li key={item.href} className="pl-9 first:pl-0">
+                  <Link
+                    className={`relative inline-block pb-1 transition hover:text-ink after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-full after:-translate-x-1/2 after:scale-x-0 after:bg-ink after:transition-transform after:duration-150 after:ease-out after:content-[''] hover:after:scale-x-100 ${
+                      isActive ? "text-ink after:scale-x-100" : ""
+                    }`}
+                    href={item.href}
+                    onClick={() => setActiveHref(item.href)}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
 
           <button
@@ -74,14 +100,27 @@ export function NavBar() {
             : "pointer-events-none -translate-y-2 opacity-0"
         }`}
       >
-        <ul className="mx-auto flex w-full max-w-site flex-col items-center gap-6 text-[32px] font-medium leading-[1.6] tracking-[-0.5px] text-ink">
-          {navItems.map((item) => (
-            <li key={item.href}>
-              <Link className="block px-3" href={item.href} onClick={closeMenu}>
-                {item.label}
-              </Link>
-            </li>
-          ))}
+        <ul className="mx-auto flex w-full max-w-site flex-col items-center gap-6 text-[20px] font-medium leading-[1.6] tracking-[-0.5px] text-ink">
+          {navItems.map((item) => {
+            const isActive = activeHref === item.href;
+
+            return (
+              <li key={item.href}>
+                <Link
+                  className={`relative inline-block px-3 pb-1 after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-[calc(100%-1.5rem)] after:-translate-x-1/2 after:scale-x-0 after:bg-ink after:transition-transform after:duration-150 after:ease-out after:content-[''] hover:after:scale-x-100 ${
+                    isActive ? "after:scale-x-100" : ""
+                  }`}
+                  href={item.href}
+                  onClick={() => {
+                    setActiveHref(item.href);
+                    closeMenu();
+                  }}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </header>
