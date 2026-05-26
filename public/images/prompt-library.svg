@@ -1,0 +1,11 @@
+<svg width="1200" height="860" viewBox="0 0 1200 860" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="860" fill="#FFF7D8"/>
+  <rect x="122" y="122" width="956" height="616" rx="24" fill="#222222"/>
+  <rect x="184" y="184" width="832" height="96" rx="12" fill="#FF6E99"/>
+  <rect x="184" y="326" width="520" height="58" rx="10" fill="#FFFFFF"/>
+  <rect x="184" y="428" width="692" height="58" rx="10" fill="#FFFFFF"/>
+  <rect x="184" y="530" width="604" height="58" rx="10" fill="#FFFFFF"/>
+  <circle cx="942" cy="550" r="72" fill="#8FD7C7"/>
+  <text x="214" y="249" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="48" font-weight="700">Prompt Library</text>
+  <text x="122" y="806" fill="#222222" font-family="Arial, sans-serif" font-size="66" font-weight="700">Reusable AI Prompts</text>
+</svg>

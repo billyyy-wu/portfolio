@@ -4,6 +4,9 @@ import type { PostSummary } from "@/lib/mdx";
 import { cn } from "@/lib/utils";
 
 const coverAspectBySlug: Record<string, string> = {
+  "design-trends-and-ai-collaboration": "aspect-[1200/860]",
+  "ai-design-workflow-tips": "aspect-[1200/860]",
+  "prompt-library-for-designers": "aspect-[1200/860]",
   fazer: "aspect-[352.66/499.44]",
   "kulturnatt-stockholm": "aspect-[352.66/326.2]",
   mobilepay: "aspect-[352.66/489.75]",

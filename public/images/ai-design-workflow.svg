@@ -1,0 +1,13 @@
+<svg width="1200" height="860" viewBox="0 0 1200 860" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="860" fill="#EAF7FF"/>
+  <rect x="112" y="132" width="976" height="596" rx="44" fill="#FFFFFF"/>
+  <rect x="168" y="206" width="252" height="394" rx="28" fill="#222222"/>
+  <rect x="474" y="206" width="252" height="394" rx="28" fill="#FF6E99"/>
+  <rect x="780" y="206" width="252" height="394" rx="28" fill="#F7D65A"/>
+  <path d="M431 402H463" stroke="#222222" stroke-width="18" stroke-linecap="round"/>
+  <path d="M737 402H769" stroke="#222222" stroke-width="18" stroke-linecap="round"/>
+  <text x="198" y="398" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="52" font-weight="700">Brief</text>
+  <text x="510" y="398" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="52" font-weight="700">AI</text>
+  <text x="826" y="398" fill="#222222" font-family="Arial, sans-serif" font-size="52" font-weight="700">Ship</text>
+  <text x="112" y="790" fill="#222222" font-family="Arial, sans-serif" font-size="68" font-weight="700">AI Design Workflow</text>
+</svg>

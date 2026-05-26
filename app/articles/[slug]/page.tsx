@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+/* eslint-disable @next/next/no-img-element */
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import type { AnchorHTMLAttributes } from "react";
+import type { AnchorHTMLAttributes, ImgHTMLAttributes } from "react";
 
 import { FadeUp } from "@/components/animations/FadeUp";
 import { getAllPosts, getPostBySlug, type Post } from "@/lib/mdx";
@@ -15,6 +16,15 @@ interface ArticlePageProps {
 const mdxComponents = {
   a: (props: AnchorHTMLAttributes<HTMLAnchorElement>) => (
     <a {...props} className="font-bold text-accent underline-offset-4 hover:underline" />
+  ),
+  img: (props: ImgHTMLAttributes<HTMLImageElement>) => (
+    // 文章正文图片使用原生 img，确保 GIF 动图不会被图片优化器转成静态帧。
+    <img
+      {...props}
+      alt={props.alt ?? ""}
+      loading="lazy"
+      className="my-10 w-full rounded-lg object-cover"
+    />
   ),
 };
 
