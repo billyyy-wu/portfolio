@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background: #ffffff;
+  color: #525252;
+  font-weight: 500;
+}
+
+::selection {
+  background: #ff6e99;
+  color: #ffffff;
+}
+
+@layer utilities {
+  .site-gradient-top {
+    background: linear-gradient(180deg, #fbeeee 0%, #fbeeee 82%, #ffffff 100%);
+  }
+
+  .site-gradient-bottom {
+    background: linear-gradient(180deg, #ffffff 0%, #fbeeee 100%);
+  }
+}

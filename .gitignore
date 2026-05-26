@@ -1,0 +1,28 @@
+# 依赖目录由 npm install 重新生成，避免提交体积过大的本地文件。
+node_modules/
+
+# Next.js 构建产物和缓存只属于本地/部署环境，不进入版本库。
+.next/
+out/
+
+# 生产构建与调试过程中生成的临时文件。
+dist/
+coverage/
+*.tsbuildinfo
+
+# 本地环境变量可能包含密钥，只保留示例文件进入版本库。
+.env
+.env*.local
+!.env.example
+
+# 系统与编辑器生成的无关文件。
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# 日志文件用于本地排查，不参与内容管理。
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
