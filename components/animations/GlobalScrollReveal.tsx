@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-type RevealType = "text" | "image";
+type RevealType = "text" | "image" | "work-card";
 
 interface RevealTarget {
   element: HTMLElement;
@@ -33,12 +33,22 @@ const textSelector = [
 ].join(",");
 
 const imageSelector = "main img, footer img";
+const groupedRevealSelector = '[data-global-reveal-group="work-card"]';
 const visibleClassName = "is-visible";
 const instantClassName = "is-instant";
+const revealRootMargin = "0px 0px -4% 0px";
+const revealThreshold = 0.16;
+const scrollDirectionDelta = 2;
 let cleanupActiveReveal: () => void = () => undefined;
 
 function shouldReveal(element: HTMLElement) {
-  return !element.closest("[data-no-global-reveal]");
+  if (element.closest("[data-no-global-reveal]")) {
+    return false;
+  }
+
+  const revealGroup = element.closest<HTMLElement>("[data-global-reveal-group]");
+
+  return !revealGroup || revealGroup === element;
 }
 
 function isInViewport(element: HTMLElement) {
@@ -48,6 +58,11 @@ function isInViewport(element: HTMLElement) {
 }
 
 function collectRevealTargets(): RevealTarget[] {
+  const groupedTargets = Array.from(
+    document.querySelectorAll<HTMLElement>(groupedRevealSelector),
+  )
+    .filter(shouldReveal)
+    .map((element) => ({ element, type: "work-card" as const }));
   const textTargets = Array.from(document.querySelectorAll<HTMLElement>(textSelector))
     .filter(shouldReveal)
     .map((element) => ({ element, type: "text" as const }));
@@ -55,7 +70,7 @@ function collectRevealTargets(): RevealTarget[] {
     .filter(shouldReveal)
     .map((element) => ({ element, type: "image" as const }));
 
-  return [...textTargets, ...imageTargets];
+  return [...groupedTargets, ...textTargets, ...imageTargets];
 }
 
 function showTarget(element: HTMLElement, revealMode: "animated" | "instant") {
@@ -103,7 +118,7 @@ function setupReveal(animateInitialViewport: boolean) {
     const currentScrollY = window.scrollY;
     const delta = currentScrollY - latestScrollY;
 
-    if (Math.abs(delta) > 2) {
+    if (Math.abs(delta) > scrollDirectionDelta) {
       scrollDirection = delta > 0 ? "down" : "up";
       hasScrolledDown = hasScrolledDown || delta > 0;
       latestScrollY = currentScrollY;
@@ -145,8 +160,8 @@ function setupReveal(animateInitialViewport: boolean) {
       });
     },
     {
-      rootMargin: "0px 0px -4% 0px",
-      threshold: 0.16,
+      rootMargin: revealRootMargin,
+      threshold: revealThreshold,
     },
   );
 

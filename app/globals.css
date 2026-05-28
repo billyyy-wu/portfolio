@@ -4,6 +4,23 @@
 
 :root {
   color-scheme: light;
+  /* 全局 reveal 基础参数：文字、图片和首页卡片共用同一套缓动标准。 */
+  --reveal-standard-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --reveal-opacity-duration: 640ms;
+  --reveal-transform-duration: 760ms;
+  /* 文字从下到上 reveal 参数。 */
+  --reveal-text-offset-y: 28px;
+  --reveal-text-duration: 640ms;
+  /* 图片和首页卡片：Y 轴负责出现位移，clip-path 负责无位移的从左到右揭示。 */
+  --reveal-media-offset-y: 28px;
+  --reveal-left-clip-start: inset(0 100% 0 0);
+  --reveal-left-clip-end: inset(0 0 0 0);
+  --reveal-left-opacity-duration: 520ms;
+  --reveal-left-transform-duration: var(--reveal-transform-duration);
+  --reveal-left-clip-duration: var(--reveal-transform-duration);
+  --reveal-left-opacity-ease: ease-out;
+  --reveal-left-transform-ease: var(--reveal-standard-ease);
+  --reveal-left-clip-ease: var(--reveal-standard-ease);
 }
 
 html {
@@ -23,33 +40,38 @@ body {
 }
 
 [data-global-reveal] {
-  will-change: opacity, transform;
+  will-change: opacity, transform, clip-path;
 }
 
 [data-global-reveal="text"]:not(.is-visible) {
   opacity: 0;
-  transform: translate3d(0, 28px, 0);
+  transform: translate3d(0, var(--reveal-text-offset-y), 0);
 }
 
 [data-global-reveal="text"].is-visible {
   opacity: 1;
   transform: translate3d(0, 0, 0);
   transition:
-    opacity 640ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 640ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity var(--reveal-text-duration) var(--reveal-standard-ease),
+    transform var(--reveal-text-duration) var(--reveal-standard-ease);
 }
 
-[data-global-reveal="image"]:not(.is-visible) {
+[data-global-reveal="image"]:not(.is-visible),
+[data-global-reveal="work-card"]:not(.is-visible) {
+  clip-path: var(--reveal-left-clip-start);
   opacity: 0;
-  transform: translate3d(-32px, 0, 0);
+  transform: translate3d(0, var(--reveal-media-offset-y), 0);
 }
 
-[data-global-reveal="image"].is-visible {
+[data-global-reveal="image"].is-visible,
+[data-global-reveal="work-card"].is-visible {
+  clip-path: var(--reveal-left-clip-end);
   opacity: 1;
   transform: translate3d(0, 0, 0);
   transition:
-    opacity 520ms ease-out,
-    transform 760ms cubic-bezier(0.22, 1, 0.36, 1);
+    clip-path var(--reveal-left-clip-duration) var(--reveal-left-clip-ease),
+    opacity var(--reveal-left-opacity-duration) var(--reveal-left-opacity-ease),
+    transform var(--reveal-left-transform-duration) var(--reveal-left-transform-ease);
 }
 
 [data-global-reveal].is-instant {

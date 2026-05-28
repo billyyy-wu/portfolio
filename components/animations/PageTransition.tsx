@@ -22,26 +22,49 @@ export interface PageTransitionProps {
   initialDirection?: "left" | "right";
 }
 
-const panelCount = 6;
+const panelCount = 5;
 const panelIndexes = Array.from({ length: panelCount }, (_, index) => index);
 const ease = [0.22, 1, 0.36, 1] as const;
-const panelCoverDuration = 0.12;
-const routeCoverDurationMs = panelCount * panelCoverDuration * 1000 + 80;
+const panelCoverDurations = [0.05, 0.12, 0.12, 0.12, 0.05] as const;
+const panelCoverGap = 0.05;
+const routeCoverDurationMs =
+  (panelCoverDurations.reduce((total, duration) => total + duration, 0) +
+    (panelCount - 1) * panelCoverGap) *
+    1000 +
+  80;
+
+function getPanelDuration(index: number) {
+  return panelCoverDurations[index] ?? panelCoverDurations[0];
+}
 
 function getPanelDelay(index: number) {
-  return index * panelCoverDuration;
+  // 每个遮罩按前面遮罩的真实时长累加，保证顺序衔接并保留固定间隔。
+  return panelCoverDurations
+    .slice(0, index)
+    .reduce((total, duration) => total + duration + panelCoverGap, 0);
 }
 
 const panelVariants: Variants = {
   idle: {
+    opacity: 0,
     scaleX: 0,
   },
   cover: (index: number) => ({
-    scaleX: 1,
+    opacity: [0, 0.7, 1],
+    scaleX: [0.08, 1],
+    // 透明度前 28% 快速到 0.7，后段慢慢变实，总时长保持和横向展开一致。
     transition: {
-      delay: getPanelDelay(index),
-      duration: panelCoverDuration,
-      ease,
+      opacity: {
+        delay: getPanelDelay(index),
+        duration: getPanelDuration(index),
+        times: [0, 0.28, 1],
+        ease: "linear",
+      },
+      scaleX: {
+        delay: getPanelDelay(index),
+        duration: getPanelDuration(index),
+        ease,
+      },
     },
   }),
 };
@@ -83,7 +106,7 @@ function TileCoverOverlay({ isReducedMotion }: { isReducedMotion: boolean }) {
   return (
     <motion.div
       data-route-transition-overlay
-      className="pointer-events-none fixed inset-0 z-40 grid grid-cols-6 overflow-hidden bg-transparent"
+      className="pointer-events-none fixed inset-0 z-40 grid grid-cols-5 overflow-hidden bg-transparent"
       initial="idle"
       animate="cover"
       aria-hidden="true"

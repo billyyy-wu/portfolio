@@ -7,8 +7,8 @@ import { useEffect, useRef, useState } from "react";
 
 const navItems = [
   { href: "/", label: "Work" },
-  { href: "#resume", label: "Resume" },
   { href: "#connect", label: "About" },
+  { href: "#resume", label: "Resume" },
 ];
 
 // 将 logo 内联为 SVG，方便在悬浮时对内部字母做轻微错位移动。
@@ -65,10 +65,36 @@ export function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeHref, setActiveHref] = useState("/");
   const [isHidden, setIsHidden] = useState(false);
+  const isHiddenRef = useRef(false);
   const lastScrollY = useRef(0);
 
   function closeMenu() {
     setIsOpen(false);
+  }
+
+  function setNavHidden(nextIsHidden: boolean) {
+    if (isHiddenRef.current === nextIsHidden) {
+      return;
+    }
+
+    isHiddenRef.current = nextIsHidden;
+    setIsHidden(nextIsHidden);
+  }
+
+  function resetNavPosition() {
+    setNavHidden(false);
+    lastScrollY.current = 0;
+  }
+
+  function scrollToTopImmediately() {
+    const htmlElement = document.documentElement;
+    const previousScrollBehavior = htmlElement.style.scrollBehavior;
+
+    // 页面切换时临时关闭全局平滑滚动，避免新页面落在接近顶部但未完全到顶的位置。
+    htmlElement.style.scrollBehavior = "auto";
+    window.scrollTo(0, 0);
+    htmlElement.style.scrollBehavior = previousScrollBehavior;
+    resetNavPosition();
   }
 
   function handleLogoClick(event: MouseEvent<HTMLAnchorElement>) {
@@ -79,7 +105,20 @@ export function NavBar() {
       event.preventDefault();
       // 首页内点击 logo 时主动清除锚点并回到顶部，避免同路由点击没有反馈。
       window.history.pushState(null, "", "/");
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      scrollToTopImmediately();
+    }
+  }
+
+  function handleNavItemClick(
+    event: MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) {
+    setActiveHref(href);
+
+    if (href === "/" && pathname === "/") {
+      event.preventDefault();
+      window.history.pushState(null, "", "/");
+      scrollToTopImmediately();
     }
   }
 
@@ -96,6 +135,14 @@ export function NavBar() {
     return () => window.removeEventListener("hashchange", syncActiveHref);
   }, [pathname]);
 
+  useEffect(() => {
+    resetNavPosition();
+
+    if (!window.location.hash) {
+      window.requestAnimationFrame(scrollToTopImmediately);
+    }
+  }, [pathname]);
+
   // 根据滚动方向控制导航显隐：下滑隐藏，上滑显示，并过滤细小滚动避免抖动。
   useEffect(() => {
     let animationFrameId = 0;
@@ -105,14 +152,14 @@ export function NavBar() {
       const scrollDelta = currentScrollY - lastScrollY.current;
 
       if (isOpen) {
-        setIsHidden(false);
+        setNavHidden(false);
         lastScrollY.current = currentScrollY;
         animationFrameId = 0;
         return;
       }
 
       if (Math.abs(scrollDelta) > 8) {
-        setIsHidden(scrollDelta > 0 && currentScrollY > 96);
+        setNavHidden(scrollDelta > 0 && currentScrollY > 96);
         lastScrollY.current = currentScrollY;
       }
 
@@ -139,34 +186,84 @@ export function NavBar() {
   }, [isOpen]);
 
   return (
-    <header
-      className={`sticky top-0 z-50 bg-white font-nav transform-gpu transition-[transform,opacity] duration-200 ease-out will-change-transform ${
-        isHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
-      }`}
-    >
-      <div className="mx-auto flex h-24 w-full max-w-site items-start justify-between px-4 py-8">
-        <Link
-          href="/"
-          aria-label="Back to home"
-          className="group relative block h-[30px] w-[200px]"
-          onClick={handleLogoClick}
-        >
-          <AnimatedLogo />
-        </Link>
+    <div className="h-24">
+      <header
+        className={`fixed left-0 right-0 top-0 z-50 bg-white font-nav transform-gpu transition-transform duration-[180ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform [backface-visibility:hidden] ${
+          isHidden ? "-translate-y-full" : "translate-y-0"
+        }`}
+      >
+        <div className="mx-auto flex h-24 w-full max-w-site items-start justify-between px-4 py-8">
+          <Link
+            href="/"
+            aria-label="Back to home"
+            className="group relative block h-[30px] w-[200px]"
+            onClick={handleLogoClick}
+          >
+            <AnimatedLogo />
+          </Link>
 
-        <nav aria-label="Primary navigation">
-          <ul className="hidden items-start text-[20px] font-medium leading-7 tracking-[-0.5px] text-neutral-600 md:flex">
+          <nav aria-label="Primary navigation">
+            <ul className="hidden items-start text-[20px] font-medium leading-7 tracking-[-0.5px] text-neutral-600 md:flex">
+              {navItems.map((item) => {
+                const isActive = activeHref === item.href;
+
+                return (
+                  <li key={item.href} className="pl-9 first:pl-0">
+                    <Link
+                      className={`relative inline-block pb-1 transition hover:text-ink after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-full after:-translate-x-1/2 after:scale-x-0 after:bg-ink after:transition-transform after:duration-150 after:ease-out after:content-[''] hover:after:scale-x-100 ${
+                        isActive ? "text-ink after:scale-x-100" : ""
+                      }`}
+                      href={item.href}
+                      onClick={(event) => handleNavItemClick(event, item.href)}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <button
+              type="button"
+              aria-label={isOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isOpen}
+              aria-controls="mobile-menu"
+              className="relative flex size-8 items-center justify-center md:hidden"
+              onClick={() => setIsOpen((current) => !current)}
+            >
+              <span className="absolute h-[5px] w-8 rounded-full bg-ink transition-transform duration-200" />
+              <span
+                className={`absolute h-[5px] w-8 rounded-full bg-ink transition-transform duration-200 ${
+                  isOpen ? "rotate-90" : "rotate-0"
+                }`}
+              />
+            </button>
+          </nav>
+        </div>
+
+        <div
+          id="mobile-menu"
+          className={`absolute left-0 right-0 top-full bg-white px-4 pb-8 transition duration-200 md:hidden ${
+            isOpen
+              ? "pointer-events-auto translate-y-0 opacity-100"
+              : "pointer-events-none -translate-y-2 opacity-0"
+          }`}
+        >
+          <ul className="mx-auto flex w-full max-w-site flex-col items-center gap-6 text-[20px] font-medium leading-[1.6] tracking-[-0.5px] text-ink">
             {navItems.map((item) => {
               const isActive = activeHref === item.href;
 
               return (
-                <li key={item.href} className="pl-9 first:pl-0">
+                <li key={item.href}>
                   <Link
-                    className={`relative inline-block pb-1 transition hover:text-ink after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-full after:-translate-x-1/2 after:scale-x-0 after:bg-ink after:transition-transform after:duration-150 after:ease-out after:content-[''] hover:after:scale-x-100 ${
-                      isActive ? "text-ink after:scale-x-100" : ""
+                    className={`relative inline-block px-3 pb-1 after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-[calc(100%-1.5rem)] after:-translate-x-1/2 after:scale-x-0 after:bg-ink after:transition-transform after:duration-150 after:ease-out after:content-[''] hover:after:scale-x-100 ${
+                      isActive ? "after:scale-x-100" : ""
                     }`}
                     href={item.href}
-                    onClick={() => setActiveHref(item.href)}
+                    onClick={(event) => {
+                      handleNavItemClick(event, item.href);
+                      closeMenu();
+                    }}
                   >
                     {item.label}
                   </Link>
@@ -174,56 +271,8 @@ export function NavBar() {
               );
             })}
           </ul>
-
-          <button
-            type="button"
-            aria-label={isOpen ? "Close menu" : "Open menu"}
-            aria-expanded={isOpen}
-            aria-controls="mobile-menu"
-            className="relative flex size-8 items-center justify-center md:hidden"
-            onClick={() => setIsOpen((current) => !current)}
-          >
-            <span className="absolute h-[5px] w-8 rounded-full bg-ink transition-transform duration-200" />
-            <span
-              className={`absolute h-[5px] w-8 rounded-full bg-ink transition-transform duration-200 ${
-                isOpen ? "rotate-90" : "rotate-0"
-              }`}
-            />
-          </button>
-        </nav>
-      </div>
-
-      <div
-        id="mobile-menu"
-        className={`absolute left-0 right-0 top-full bg-white px-4 pb-8 transition duration-200 md:hidden ${
-          isOpen
-            ? "pointer-events-auto translate-y-0 opacity-100"
-            : "pointer-events-none -translate-y-2 opacity-0"
-        }`}
-      >
-        <ul className="mx-auto flex w-full max-w-site flex-col items-center gap-6 text-[20px] font-medium leading-[1.6] tracking-[-0.5px] text-ink">
-          {navItems.map((item) => {
-            const isActive = activeHref === item.href;
-
-            return (
-              <li key={item.href}>
-                <Link
-                  className={`relative inline-block px-3 pb-1 after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-[calc(100%-1.5rem)] after:-translate-x-1/2 after:scale-x-0 after:bg-ink after:transition-transform after:duration-150 after:ease-out after:content-[''] hover:after:scale-x-100 ${
-                    isActive ? "after:scale-x-100" : ""
-                  }`}
-                  href={item.href}
-                  onClick={() => {
-                    setActiveHref(item.href);
-                    closeMenu();
-                  }}
-                >
-                  {item.label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    </header>
+        </div>
+      </header>
+    </div>
   );
 }

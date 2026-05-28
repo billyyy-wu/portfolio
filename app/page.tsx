@@ -160,8 +160,19 @@ export default function HomePage() {
             <h2 className="text-3xl font-bold leading-[1.2] tracking-[-0.6px] text-ink md:text-[32px]">
               Selected work
             </h2>
-            <span aria-hidden="true" className="ml-2 text-[28px] leading-none text-neutral-400">
-              ↓
+            <span
+              aria-hidden="true"
+              data-no-global-reveal
+              className="ml-2 inline-flex size-8 items-center justify-center"
+            >
+              <Image
+                src="/images/selectedwork-arrow.svg"
+                alt=""
+                width={32}
+                height={32}
+                unoptimized
+                className="size-8"
+              />
             </span>
           </FadeUp>
 

@@ -44,17 +44,18 @@ export function PostCard({ post, priority = false }: PostCardProps) {
       {post.cover ? (
         <div
           className={cn(
-            "relative mb-4 w-full overflow-hidden bg-neutral-100",
+            "relative z-0 mb-4 w-full overflow-visible bg-transparent md:group-hover:z-20",
             coverAspectBySlug[post.slug] ?? "aspect-[352.66/326.2]",
           )}
         >
+          {/* hover 时让封面脱离原始边界并压过文字，复现案例中的倾斜放大视觉。 */}
           <Image
             src={post.cover}
             alt={post.coverAlt ?? post.title}
             fill
             sizes="(min-width: 1024px) 352px, (min-width: 640px) 45vw, 100vw"
             priority={priority}
-            className="object-cover transition duration-200 ease-in-out md:group-hover:-rotate-3 md:group-hover:scale-110 md:group-hover:shadow-2xl"
+            className="object-cover transition duration-[620ms] ease-[cubic-bezier(0.2,1.24,0.34,1)] will-change-transform md:group-hover:z-20 md:group-hover:-rotate-3 md:group-hover:scale-110 md:group-hover:shadow-[0_28px_54px_rgba(0,0,0,0.18)]"
           />
         </div>
       ) : null}
@@ -71,7 +72,10 @@ export function PostCard({ post, priority = false }: PostCardProps) {
     "group block focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4";
 
   return (
-    <article className="mb-16 break-inside-avoid px-3 md:px-5">
+    <article
+      data-global-reveal-group="work-card"
+      className="relative z-0 mb-16 break-inside-avoid px-3 md:hover:z-30 md:px-5"
+    >
       {isExternal ? (
         <a href={href} target="_blank" rel="noreferrer" className={linkClassName}>
           {content}
