@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import type { PostSummary } from "@/lib/mdx";
 import { cn } from "@/lib/utils";
@@ -38,40 +39,48 @@ export interface PostCardProps {
 export function PostCard({ post, priority = false }: PostCardProps) {
   const href = post.externalUrl ?? `/articles/${post.slug}`;
   const isExternal = Boolean(post.externalUrl);
+  const content = (
+    <>
+      {post.cover ? (
+        <div
+          className={cn(
+            "relative mb-4 w-full overflow-hidden bg-neutral-100",
+            coverAspectBySlug[post.slug] ?? "aspect-[352.66/326.2]",
+          )}
+        >
+          <Image
+            src={post.cover}
+            alt={post.coverAlt ?? post.title}
+            fill
+            sizes="(min-width: 1024px) 352px, (min-width: 640px) 45vw, 100vw"
+            priority={priority}
+            className="object-cover transition duration-200 ease-in-out md:group-hover:-rotate-3 md:group-hover:scale-110 md:group-hover:shadow-2xl"
+          />
+        </div>
+      ) : null}
+
+      <h3 className="mb-1 text-[24px] font-bold leading-[1.2] tracking-[-0.6px] text-ink">
+        {post.title}
+      </h3>
+      <p className="mb-4 text-[18px] font-medium leading-[1.8] tracking-[-0.45px] text-neutral-600">
+        {post.description}
+      </p>
+    </>
+  );
+  const linkClassName =
+    "group block focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4";
 
   return (
     <article className="mb-16 break-inside-avoid px-3 md:px-5">
-      <a
-        href={href}
-        target={isExternal ? "_blank" : undefined}
-        rel={isExternal ? "noreferrer" : undefined}
-        className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4"
-      >
-        {post.cover ? (
-          <div
-            className={cn(
-              "relative mb-4 w-full overflow-hidden bg-neutral-100",
-              coverAspectBySlug[post.slug] ?? "aspect-[352.66/326.2]",
-            )}
-          >
-            <Image
-              src={post.cover}
-              alt={post.coverAlt ?? post.title}
-              fill
-              sizes="(min-width: 1024px) 352px, (min-width: 640px) 45vw, 100vw"
-              priority={priority}
-              className="object-cover transition duration-200 ease-in-out md:group-hover:-rotate-3 md:group-hover:scale-110 md:group-hover:shadow-2xl"
-            />
-          </div>
-        ) : null}
-
-        <h3 className="mb-1 text-[24px] font-bold leading-[1.2] tracking-[-0.6px] text-ink">
-          {post.title}
-        </h3>
-        <p className="mb-4 text-[18px] font-medium leading-[1.8] tracking-[-0.45px] text-neutral-600">
-          {post.description}
-        </p>
-      </a>
+      {isExternal ? (
+        <a href={href} target="_blank" rel="noreferrer" className={linkClassName}>
+          {content}
+        </a>
+      ) : (
+        <Link href={href} className={linkClassName}>
+          {content}
+        </Link>
+      )}
     </article>
   );
 }

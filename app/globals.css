@@ -22,6 +22,49 @@ body {
   color: #ffffff;
 }
 
+[data-global-reveal] {
+  will-change: opacity, transform;
+}
+
+[data-global-reveal="text"]:not(.is-visible) {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+}
+
+[data-global-reveal="text"].is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity 640ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 640ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-global-reveal="image"]:not(.is-visible) {
+  opacity: 0;
+  transform: translate3d(-32px, 0, 0);
+}
+
+[data-global-reveal="image"].is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity 520ms ease-out,
+    transform 760ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-global-reveal].is-instant {
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-global-reveal] {
+    clip-path: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 @layer utilities {
   .site-gradient-top {
     background: linear-gradient(180deg, #fbeeee 0%, #fbeeee 82%, #ffffff 100%);

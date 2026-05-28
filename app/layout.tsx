@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import type { ReactNode } from "react";
 
+import { GlobalScrollReveal } from "@/components/animations/GlobalScrollReveal";
 import { PageTransition } from "@/components/animations/PageTransition";
 import { Footer } from "@/components/layout/Footer";
 import { NavBar } from "@/components/layout/NavBar";
+import { BackToTopButton } from "@/components/ui/BackToTopButton";
 
 import "./globals.css";
 
@@ -41,6 +43,8 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
           <PageTransition initialDirection="right">{children}</PageTransition>
         </main>
         <Footer />
+        <BackToTopButton />
+        <GlobalScrollReveal />
       </body>
     </html>
   );

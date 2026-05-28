@@ -1,10 +1,8 @@
-"use client";
-
-import { motion, type HTMLMotionProps } from "framer-motion";
+import type { HTMLAttributes } from "react";
 
 import { cn } from "@/lib/utils";
 
-export interface FadeUpProps extends HTMLMotionProps<"div"> {
+export interface FadeUpProps extends HTMLAttributes<HTMLDivElement> {
   delay?: number;
   duration?: number;
   y?: number;
@@ -18,17 +16,14 @@ export function FadeUp({
   y = 28,
   ...props
 }: FadeUpProps) {
-  // 统一滚动揭示动效，避免页面里重复散落 Framer Motion 配置。
+  void delay;
+  void duration;
+  void y;
+
+  // 全局滚动动效由 GlobalScrollReveal 统一接管，这里保留为兼容旧页面结构的布局容器。
   return (
-    <motion.div
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration, delay, ease: [0.22, 1, 0.36, 1] }}
-      className={cn(className)}
-      {...props}
-    >
+    <div className={cn(className)} {...props}>
       {children}
-    </motion.div>
+    </div>
   );
 }

@@ -140,7 +140,7 @@ export function NavBar() {
 
   return (
     <header
-      className={`sticky top-0 z-20 bg-white font-nav transform-gpu transition-[transform,opacity] duration-200 ease-out will-change-transform ${
+      className={`sticky top-0 z-50 bg-white font-nav transform-gpu transition-[transform,opacity] duration-200 ease-out will-change-transform ${
         isHidden ? "-translate-y-full opacity-0" : "translate-y-0 opacity-100"
       }`}
     >

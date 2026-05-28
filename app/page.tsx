@@ -99,7 +99,7 @@ export default function HomePage() {
           <FadeUp delay={0.16}>
             <a
               href="#connect"
-              className="inline-flex h-[68px] items-center rounded-full bg-neutral-900 py-3 pl-3 pr-7 text-[20px] font-medium leading-7 text-white transition hover:bg-accent"
+              className="group inline-flex h-[68px] items-center rounded-full bg-neutral-900 py-3 pl-3 pr-7 text-[20px] font-medium leading-7 text-white"
             >
               <span className="relative mr-4 size-11 overflow-hidden rounded-full">
                 <Image
@@ -109,9 +109,24 @@ export default function HomePage() {
                   height={44}
                   className="size-full object-cover"
                 />
-                <span className="absolute inset-0 rounded-full bg-accent mix-blend-screen" />
+                <span className="absolute inset-0 rounded-full bg-accent mix-blend-screen transition-opacity duration-200 group-hover:opacity-0" />
+                {/* 悬浮时白色遮罩只做淡入，视觉动效集中在箭头本身。 */}
+                <span className="absolute inset-0 rounded-full bg-white opacity-0 transition-opacity duration-150 group-hover:opacity-100" />
+                <span
+                  data-no-global-reveal
+                  className="absolute inset-0 flex items-center justify-center rounded-full"
+                >
+                  <Image
+                    src="/images/hero-arrow.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                    unoptimized
+                    className="-translate-x-2 opacity-0 will-change-transform transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.2,1.18,0.42,1)] group-hover:translate-x-0 group-hover:opacity-100"
+                  />
+                </span>
               </span>
-              <span className="pt-0.5">About Cathrine</span>
+              <span className="pt-0.5">About Billy</span>
             </a>
           </FadeUp>
 
