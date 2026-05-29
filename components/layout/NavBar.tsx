@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { MouseEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const navItems = [
   { href: "/", label: "Work" },
@@ -72,30 +72,36 @@ export function NavBar() {
     setIsOpen(false);
   }
 
-  function setNavHidden(nextIsHidden: boolean) {
+  const setNavHidden = useCallback((nextIsHidden: boolean) => {
     if (isHiddenRef.current === nextIsHidden) {
       return;
     }
 
     isHiddenRef.current = nextIsHidden;
     setIsHidden(nextIsHidden);
-  }
+  }, []);
 
-  function resetNavPosition() {
+  const resetNavPosition = useCallback(() => {
     setNavHidden(false);
     lastScrollY.current = 0;
-  }
+  }, [setNavHidden]);
 
-  function scrollToTopImmediately() {
+  const scrollToTopImmediately = useCallback(() => {
     const htmlElement = document.documentElement;
     const previousScrollBehavior = htmlElement.style.scrollBehavior;
 
     // 页面切换时临时关闭全局平滑滚动，避免新页面落在接近顶部但未完全到顶的位置。
-    htmlElement.style.scrollBehavior = "auto";
+    htmlElement.style.setProperty("scroll-behavior", "auto");
     window.scrollTo(0, 0);
-    htmlElement.style.scrollBehavior = previousScrollBehavior;
+
+    if (previousScrollBehavior) {
+      htmlElement.style.setProperty("scroll-behavior", previousScrollBehavior);
+    } else {
+      htmlElement.style.removeProperty("scroll-behavior");
+    }
+
     resetNavPosition();
-  }
+  }, [resetNavPosition]);
 
   function handleLogoClick(event: MouseEvent<HTMLAnchorElement>) {
     setActiveHref("/");
@@ -141,7 +147,7 @@ export function NavBar() {
     if (!window.location.hash) {
       window.requestAnimationFrame(scrollToTopImmediately);
     }
-  }, [pathname]);
+  }, [pathname, resetNavPosition, scrollToTopImmediately]);
 
   // 根据滚动方向控制导航显隐：下滑隐藏，上滑显示，并过滤细小滚动避免抖动。
   useEffect(() => {
@@ -183,7 +189,7 @@ export function NavBar() {
         window.cancelAnimationFrame(animationFrameId);
       }
     };
-  }, [isOpen]);
+  }, [isOpen, setNavHidden]);
 
   return (
     <div className="h-24">

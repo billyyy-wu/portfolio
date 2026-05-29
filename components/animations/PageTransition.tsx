@@ -1,16 +1,12 @@
 "use client";
 
-import {
-  motion,
-  useReducedMotion,
-  type Variants,
-} from "framer-motion";
 import { usePathname, useRouter } from "next/navigation";
 import {
   useEffect,
   useLayoutEffect,
   useRef,
   useState,
+  type CSSProperties,
   type MouseEvent as ReactMouseEvent,
   type ReactNode,
 } from "react";
@@ -24,7 +20,6 @@ export interface PageTransitionProps {
 
 const panelCount = 5;
 const panelIndexes = Array.from({ length: panelCount }, (_, index) => index);
-const ease = [0.22, 1, 0.36, 1] as const;
 const panelCoverDurations = [0.05, 0.12, 0.12, 0.12, 0.05] as const;
 const panelCoverGap = 0.05;
 const routeCoverDurationMs =
@@ -43,31 +38,6 @@ function getPanelDelay(index: number) {
     .slice(0, index)
     .reduce((total, duration) => total + duration + panelCoverGap, 0);
 }
-
-const panelVariants: Variants = {
-  idle: {
-    opacity: 0,
-    scaleX: 0,
-  },
-  cover: (index: number) => ({
-    opacity: [0, 0.7, 1],
-    scaleX: [0.08, 1],
-    // 透明度前 28% 快速到 0.7，后段慢慢变实，总时长保持和横向展开一致。
-    transition: {
-      opacity: {
-        delay: getPanelDelay(index),
-        duration: getPanelDuration(index),
-        times: [0, 0.28, 1],
-        ease: "linear",
-      },
-      scaleX: {
-        delay: getPanelDelay(index),
-        duration: getPanelDuration(index),
-        ease,
-      },
-    },
-  }),
-};
 
 function getInternalHref(anchor: HTMLAnchorElement) {
   const url = new URL(anchor.href);
@@ -92,34 +62,31 @@ function getInternalHref(anchor: HTMLAnchorElement) {
 function TileCoverOverlay({ isReducedMotion }: { isReducedMotion: boolean }) {
   if (isReducedMotion) {
     return (
-      <motion.div
+      <div
         data-route-transition-overlay
-        className="pointer-events-none fixed inset-0 z-40 bg-white"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.14 }}
+        className="route-transition-overlay route-transition-overlay-reduced"
         aria-hidden="true"
       />
     );
   }
 
   return (
-    <motion.div
+    <div
       data-route-transition-overlay
-      className="pointer-events-none fixed inset-0 z-40 grid grid-cols-5 overflow-hidden bg-transparent"
-      initial="idle"
-      animate="cover"
+      className="route-transition-overlay grid grid-cols-5"
       aria-hidden="true"
     >
       {panelIndexes.map((index) => (
-        <motion.span
+        <span
           key={index}
-          custom={index}
-          className="block h-full w-full origin-left bg-white"
-          variants={panelVariants}
+          className="route-transition-panel"
+          style={{
+            "--route-panel-delay": `${getPanelDelay(index)}s`,
+            "--route-panel-duration": `${getPanelDuration(index)}s`,
+          } as CSSProperties}
         />
       ))}
-    </motion.div>
+    </div>
   );
 }
 
@@ -129,7 +96,7 @@ export function PageTransition({
 }: PageTransitionProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const prefersReducedMotion = useReducedMotion();
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [isCovering, setIsCovering] = useState(false);
   const routeTimeoutId = useRef(0);
   const revealTimeoutId = useRef(0);
@@ -137,6 +104,19 @@ export function PageTransition({
   const pendingHref = useRef<string | null>(null);
 
   void initialDirection;
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    function syncReducedMotion() {
+      setPrefersReducedMotion(mediaQuery.matches);
+    }
+
+    syncReducedMotion();
+    mediaQuery.addEventListener("change", syncReducedMotion);
+
+    return () => mediaQuery.removeEventListener("change", syncReducedMotion);
+  }, []);
 
   useEffect(() => {
     function handleDocumentClick(event: MouseEvent) {
@@ -238,15 +218,9 @@ export function PageTransition({
 
   return (
     <div className="relative bg-white" onClickCapture={handleClickCapture}>
-      <motion.div
-        // 跳转时保持内容本身稳定，只让实色 tile 承担过场节奏，避免半透明遮罩质感。
-        animate={{ opacity: 1 }}
-        transition={{ duration: prefersReducedMotion ? 0 : 0.22, ease }}
-      >
-        {children}
-      </motion.div>
+      {children}
       {isCovering ? (
-        <TileCoverOverlay isReducedMotion={Boolean(prefersReducedMotion)} />
+        <TileCoverOverlay isReducedMotion={prefersReducedMotion} />
       ) : null}
     </div>
   );

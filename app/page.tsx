@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import { FadeUp } from "@/components/animations/FadeUp";
 import { PostCard } from "@/components/ui/PostCard";
-import { getAllPosts, type PostSummary } from "@/lib/mdx";
+import { getAllPosts } from "@/lib/mdx";
 
 const logoItems = [
   {
@@ -49,21 +49,9 @@ const logoItems = [
   },
 ];
 
-function getDesktopColumns(posts: PostSummary[], columnCount = 3) {
-  // 首页作品完全由 content/articles/*.mdx 驱动，新增/删除文件后自动重新分栏。
-  return posts.reduce<PostSummary[][]>(
-    (columns, post, index) => {
-      columns[index % columnCount].push(post);
-      return columns;
-    },
-    Array.from({ length: columnCount }, () => []),
-  );
-}
-
 export default function HomePage() {
   // 首页只消费文章摘要，正文延迟到详情页读取，保持首屏数据轻量。
   const posts = getAllPosts();
-  const columns = getDesktopColumns(posts);
 
   return (
     <>
@@ -87,7 +75,7 @@ export default function HomePage() {
               </h1>
             </FadeUp>
 
-            <FadeUp delay={0.08}>
+            <FadeUp>
               <p className="text-lg font-medium leading-8 tracking-[-0.45px] text-neutral-600 md:text-[23.8px] md:leading-[42px] md:tracking-[-0.6px]">
                 With more than 10 years of experience in branding, advertising
                 and visual design, I work as an independent creative for clients
@@ -96,7 +84,7 @@ export default function HomePage() {
             </FadeUp>
           </div>
 
-          <FadeUp delay={0.16}>
+          <FadeUp>
             <a
               href="#connect"
               className="group inline-flex h-[68px] items-center rounded-full bg-neutral-900 py-3 pl-3 pr-7 text-[20px] font-medium leading-7 text-white"
@@ -130,7 +118,7 @@ export default function HomePage() {
             </a>
           </FadeUp>
 
-          <FadeUp delay={0.24}>
+          <FadeUp>
             <div className="overflow-hidden py-12 [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
               <ul className="flex min-h-14 min-w-max items-center">
                 {[...logoItems, ...logoItems, ...logoItems].map((item, index) => (
@@ -163,7 +151,7 @@ export default function HomePage() {
             <span
               aria-hidden="true"
               data-no-global-reveal
-              className="ml-2 inline-flex size-8 items-center justify-center"
+              className="selected-work-arrow ml-2 inline-flex size-8 items-center justify-center"
             >
               <Image
                 src="/images/selectedwork-arrow.svg"
@@ -176,26 +164,11 @@ export default function HomePage() {
             </span>
           </FadeUp>
 
-          <div className="columns-1 sm:columns-2 lg:hidden">
+          <div className="columns-1 sm:columns-2 lg:columns-3">
             {posts.map((post, index) => (
-              <FadeUp key={post.slug} delay={(index % 3) * 0.05}>
+              <FadeUp key={post.slug}>
                 <PostCard post={post} priority={index < 3} />
               </FadeUp>
-            ))}
-          </div>
-
-          <div className="-mx-1 hidden grid-cols-3 lg:grid">
-            {columns.map((column, columnIndex) => (
-              <div key={columnIndex}>
-                {column.map((post, index) => (
-                  <FadeUp key={post.slug} delay={(columnIndex + index) * 0.02}>
-                    <PostCard
-                      post={post}
-                      priority={columnIndex === 0 && index === 0}
-                    />
-                  </FadeUp>
-                ))}
-              </div>
             ))}
           </div>
         </div>

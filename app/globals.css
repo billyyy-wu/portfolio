@@ -11,16 +11,12 @@
   /* 文字从下到上 reveal 参数。 */
   --reveal-text-offset-y: 28px;
   --reveal-text-duration: 640ms;
-  /* 图片和首页卡片：Y 轴负责出现位移，clip-path 负责无位移的从左到右揭示。 */
+  /* 图片和首页卡片只使用 opacity + transform，避免滚动时触发高成本裁切重绘。 */
   --reveal-media-offset-y: 28px;
-  --reveal-left-clip-start: inset(0 100% 0 0);
-  --reveal-left-clip-end: inset(0 0 0 0);
-  --reveal-left-opacity-duration: 520ms;
-  --reveal-left-transform-duration: var(--reveal-transform-duration);
-  --reveal-left-clip-duration: var(--reveal-transform-duration);
-  --reveal-left-opacity-ease: ease-out;
-  --reveal-left-transform-ease: var(--reveal-standard-ease);
-  --reveal-left-clip-ease: var(--reveal-standard-ease);
+  --reveal-media-opacity-duration: 520ms;
+  --reveal-media-transform-duration: var(--reveal-transform-duration);
+  --reveal-media-opacity-ease: ease-out;
+  --reveal-media-transform-ease: var(--reveal-standard-ease);
 }
 
 html {
@@ -40,7 +36,11 @@ body {
 }
 
 [data-global-reveal] {
-  will-change: opacity, transform, clip-path;
+  will-change: opacity, transform;
+}
+
+[data-global-reveal].is-reveal-complete {
+  will-change: auto;
 }
 
 [data-global-reveal="text"]:not(.is-visible) {
@@ -58,20 +58,17 @@ body {
 
 [data-global-reveal="image"]:not(.is-visible),
 [data-global-reveal="work-card"]:not(.is-visible) {
-  clip-path: var(--reveal-left-clip-start);
   opacity: 0;
   transform: translate3d(0, var(--reveal-media-offset-y), 0);
 }
 
 [data-global-reveal="image"].is-visible,
 [data-global-reveal="work-card"].is-visible {
-  clip-path: var(--reveal-left-clip-end);
   opacity: 1;
   transform: translate3d(0, 0, 0);
   transition:
-    clip-path var(--reveal-left-clip-duration) var(--reveal-left-clip-ease),
-    opacity var(--reveal-left-opacity-duration) var(--reveal-left-opacity-ease),
-    transform var(--reveal-left-transform-duration) var(--reveal-left-transform-ease);
+    opacity var(--reveal-media-opacity-duration) var(--reveal-media-opacity-ease),
+    transform var(--reveal-media-transform-duration) var(--reveal-media-transform-ease);
 }
 
 [data-global-reveal].is-instant {
@@ -80,14 +77,128 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   [data-global-reveal] {
-    clip-path: none !important;
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
   }
+
+  .selected-work-arrow {
+    animation: none !important;
+  }
 }
 
 @layer utilities {
+  @keyframes selected-work-arrow-step {
+    0%,
+    58%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+
+    70% {
+      transform: translate3d(0, 5px, 0);
+    }
+
+    82% {
+      transform: translate3d(0, -1.5px, 0);
+    }
+
+    92% {
+      transform: translate3d(0, 1px, 0);
+    }
+  }
+
+  .selected-work-arrow {
+    /* 仅移动单个 SVG 容器的 transform，不触发布局或重绘密集计算。 */
+    animation: selected-work-arrow-step 2s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+    backface-visibility: hidden;
+    contain: paint;
+    will-change: transform;
+  }
+
+  @keyframes route-panel-cover {
+    0% {
+      opacity: 0;
+      transform: scaleX(0.08);
+    }
+
+    28% {
+      opacity: 0.4;
+    }
+
+    100% {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes route-cover-fade {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  .route-transition-overlay {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  .route-transition-panel {
+    display: block;
+    height: 100%;
+    width: 100%;
+    transform-origin: left;
+    background: #ffffff;
+    animation: route-panel-cover var(--route-panel-duration) cubic-bezier(0.22, 1, 0.36, 1) var(--route-panel-delay) both;
+  }
+
+  .route-transition-overlay-reduced {
+    background: #ffffff;
+    animation: route-cover-fade 140ms ease-out both;
+  }
+
+  .back-to-top-button {
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.86);
+    transform-origin: center;
+    transition:
+      opacity 120ms ease-out,
+      transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      color 150ms ease,
+      box-shadow 150ms ease;
+    will-change: opacity, transform;
+  }
+
+  .back-to-top-button.is-visible {
+    pointer-events: auto;
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .route-transition-panel,
+    .route-transition-overlay-reduced {
+      animation-duration: 1ms !important;
+    }
+
+    .back-to-top-button {
+      transition:
+        opacity 120ms ease-out,
+        color 150ms ease,
+        box-shadow 150ms ease;
+      transform: none;
+    }
+  }
+
   .site-gradient-top {
     background: linear-gradient(180deg, #fbeeee 0%, #fbeeee 82%, #ffffff 100%);
   }

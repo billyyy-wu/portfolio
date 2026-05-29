@@ -11,9 +11,10 @@ import { BackToTopButton } from "@/components/ui/BackToTopButton";
 import "./globals.css";
 
 const oppoSans = localFont({
-  src: "../public/fonts/oppo-sans-4.0.woff2",
+  src: "../public/fonts/oppo-sans-subset.ttf",
   variable: "--font-oppo-sans",
   display: "swap",
+  adjustFontFallback: false,
   preload: false,
 });
 

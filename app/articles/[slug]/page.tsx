@@ -83,7 +83,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </p>
       </FadeUp>
 
-      <FadeUp delay={0.08}>
+      <FadeUp>
         <div className="prose prose-neutral mt-12 max-w-none prose-headings:text-ink prose-headings:font-black prose-p:leading-8 prose-a:text-accent">
           <MDXRemote source={post.content} components={mdxComponents} />
         </div>

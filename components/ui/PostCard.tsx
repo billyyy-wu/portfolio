@@ -55,7 +55,7 @@ export function PostCard({ post, priority = false }: PostCardProps) {
             fill
             sizes="(min-width: 1024px) 352px, (min-width: 640px) 45vw, 100vw"
             priority={priority}
-            className="object-cover transition duration-[620ms] ease-[cubic-bezier(0.2,1.24,0.34,1)] will-change-transform md:group-hover:z-20 md:group-hover:-rotate-3 md:group-hover:scale-110 md:group-hover:shadow-[0_28px_54px_rgba(0,0,0,0.18)]"
+            className="object-cover transition duration-[620ms] ease-[cubic-bezier(0.2,1.24,0.34,1)] md:group-hover:z-20 md:group-hover:-rotate-3 md:group-hover:scale-110 md:group-hover:shadow-[0_28px_54px_rgba(0,0,0,0.18)] md:group-hover:will-change-transform"
           />
         </div>
       ) : null}

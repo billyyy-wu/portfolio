@@ -36,7 +36,9 @@ const imageSelector = "main img, footer img";
 const groupedRevealSelector = '[data-global-reveal-group="work-card"]';
 const visibleClassName = "is-visible";
 const instantClassName = "is-instant";
-const revealRootMargin = "0px 0px -4% 0px";
+const revealCompleteClassName = "is-reveal-complete";
+const revealCompleteDelay = 820;
+const revealRootMargin = "0px 0px 40% 0px";
 const revealThreshold = 0.16;
 const scrollDirectionDelta = 2;
 let cleanupActiveReveal: () => void = () => undefined;
@@ -74,10 +76,16 @@ function collectRevealTargets(): RevealTarget[] {
 }
 
 function showTarget(element: HTMLElement, revealMode: "animated" | "instant") {
+  element.classList.remove(revealCompleteClassName);
+
   if (revealMode === "instant") {
     element.classList.add(instantClassName);
+    element.classList.add(revealCompleteClassName);
   } else {
     element.classList.remove(instantClassName);
+    window.setTimeout(() => {
+      element.classList.add(revealCompleteClassName);
+    }, revealCompleteDelay);
   }
 
   element.classList.add(visibleClassName);
@@ -131,7 +139,11 @@ function setupReveal(animateInitialViewport: boolean) {
 
     if (isInViewport(element)) {
       if (animateInitialViewport) {
-        element.classList.remove(visibleClassName, instantClassName);
+        element.classList.remove(
+          visibleClassName,
+          instantClassName,
+          revealCompleteClassName,
+        );
         initialViewportTargets.push(element);
         initialViewportTargetSet.add(element);
         return;
@@ -141,7 +153,11 @@ function setupReveal(animateInitialViewport: boolean) {
       return;
     }
 
-    element.classList.remove(visibleClassName, instantClassName);
+    element.classList.remove(
+      visibleClassName,
+      instantClassName,
+      revealCompleteClassName,
+    );
   });
 
   const observer = new IntersectionObserver(
