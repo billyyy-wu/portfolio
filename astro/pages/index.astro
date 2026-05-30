@@ -1,0 +1,174 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import PostCard from "~/components/ui/PostCard.astro";
+import { sortArticles } from "~/lib/articles";
+
+const logoItems = [
+  {
+    src: "/logos/logo-carlsberg.svg",
+    width: 96,
+    height: 38,
+    heightClass: "h-[38px]",
+    alt: "Carlsberg",
+  },
+  {
+    src: "/logos/logo-momkind.svg",
+    width: 133,
+    height: 24,
+    heightClass: "h-[24px]",
+    alt: "momkind",
+  },
+  {
+    src: "/logos/logo-roskilde-festival.svg",
+    width: 105,
+    height: 40,
+    heightClass: "h-[40px]",
+    alt: "Roskilde Festival",
+  },
+  {
+    src: "/logos/logo-la-cabra.svg",
+    width: 121,
+    height: 20,
+    heightClass: "h-[20px]",
+    alt: "La Cabra",
+  },
+  {
+    src: "/logos/logo-mobilepay.svg",
+    width: 125,
+    height: 40,
+    heightClass: "h-[40px]",
+    alt: "MobilePay",
+  },
+  {
+    src: "/logos/logo-wwf.svg",
+    width: 38,
+    height: 56,
+    heightClass: "h-[56px]",
+    alt: "WWF",
+  },
+];
+
+const articles = sortArticles(await getCollection("articles"));
+---
+
+<BaseLayout>
+  <section class="site-gradient-top pb-16 pt-12 md:min-h-[844px] md:pb-24 md:pt-32">
+    <div class="mx-auto flex w-full max-w-site flex-col gap-16 px-4">
+      <div class="flex w-full flex-col gap-8">
+        <div>
+          <h1 class="text-4xl font-bold leading-[1.3] tracking-[-1.44px] text-ink sm:text-[40px] md:text-[60px] md:leading-[78px] md:tracking-[-2.4px]">
+            Independent art director, designer,
+            <br class="hidden md:block" /> educator and founder of{" "}
+            <img
+              src="/logo-panka.svg"
+              alt="Panka"
+              width="178"
+              height="56"
+              loading="eager"
+              decoding="async"
+              class="mb-2 ml-1 inline-block h-auto w-[120px] md:w-[178px]"
+            />.
+          </h1>
+        </div>
+
+        <div>
+          <p class="text-lg font-medium leading-8 tracking-[-0.45px] text-neutral-600 md:text-[23.8px] md:leading-[42px] md:tracking-[-0.6px]">
+            With more than 10 years of experience in branding, advertising
+            and visual design, I work as an independent creative for clients
+            who want to stand out with bold design and clever ideas.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <a
+          href="#connect"
+          class="group inline-flex h-[68px] items-center rounded-full bg-neutral-900 py-3 pl-3 pr-7 text-[20px] font-medium leading-7 text-white"
+        >
+          <span class="relative mr-4 size-11 overflow-hidden rounded-full">
+            <img
+              src="/cathrine-understrup.png"
+              alt=""
+              width="44"
+              height="44"
+              loading="eager"
+              decoding="async"
+              class="size-full object-cover"
+            />
+            <span class="absolute inset-0 rounded-full bg-accent mix-blend-screen transition-opacity duration-200 group-hover:opacity-0"></span>
+            <span class="absolute inset-0 rounded-full bg-white opacity-0 transition-opacity duration-150 group-hover:opacity-100"></span>
+            <span
+              data-no-global-reveal
+              class="absolute inset-0 flex items-center justify-center rounded-full"
+            >
+              <img
+                src="/images/hero-arrow.svg"
+                alt=""
+                width="24"
+                height="24"
+                loading="eager"
+                decoding="async"
+                class="-translate-x-2 opacity-0 will-change-transform transition-[opacity,transform] duration-300 ease-[cubic-bezier(0.2,1.18,0.42,1)] group-hover:translate-x-0 group-hover:opacity-100"
+              />
+            </span>
+          </span>
+          <span class="pt-0.5">About Billy</span>
+        </a>
+      </div>
+
+      <div>
+        <div class="overflow-hidden py-12 [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
+          <ul class="flex min-h-14 min-w-max items-center">
+            {[...logoItems, ...logoItems, ...logoItems].map((item, index) => (
+              <li
+                class="mr-16 flex shrink-0 items-center justify-center md:mr-[100px]"
+              >
+                <img
+                  src={item.src}
+                  alt={item.alt}
+                  width={item.width}
+                  height={item.height}
+                  loading={index < logoItems.length ? "eager" : "lazy"}
+                  decoding="async"
+                  class={`${item.heightClass} w-auto opacity-30`}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="resume" class="bg-white py-12 md:overflow-hidden">
+    <div class="mx-auto w-full max-w-site px-4">
+      <div class="mb-8 flex items-center">
+        <h2 class="text-3xl font-bold leading-[1.2] tracking-[-0.6px] text-ink md:text-[32px]">
+          Selected work
+        </h2>
+        <span
+          aria-hidden="true"
+          data-no-global-reveal
+          class="selected-work-arrow ml-2 inline-flex size-8 items-center justify-center"
+        >
+          <img
+            src="/images/selectedwork-arrow.svg"
+            alt=""
+            width="32"
+            height="32"
+            loading="lazy"
+            decoding="async"
+            class="size-8"
+          />
+        </span>
+      </div>
+
+      <div class="-mx-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        {articles.map((article, index) => (
+          <PostCard article={article} priority={index < 3} index={index} />
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

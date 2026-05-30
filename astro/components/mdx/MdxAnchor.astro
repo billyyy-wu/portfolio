@@ -1,0 +1,10 @@
+---
+const { class: className, ...attrs } = Astro.props;
+---
+
+<a
+  {...attrs}
+  class:list={["font-bold text-accent underline-offset-4 hover:underline", className]}
+>
+  <slot />
+</a>

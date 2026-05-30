@@ -1,0 +1,372 @@
+<script>
+  const textSelector = [
+    "main h1",
+    "main h2",
+    "main h3",
+    "main h4",
+    "main h5",
+    "main h6",
+    "main p",
+    "main li",
+    "main blockquote",
+    "main figcaption",
+    "footer h1",
+    "footer h2",
+    "footer h3",
+    "footer h4",
+    "footer h5",
+    "footer h6",
+    "footer p",
+    "footer li",
+    "footer blockquote",
+    "footer figcaption",
+  ].join(",");
+
+  const imageSelector = "main img, footer img";
+  const groupedRevealSelector = '[data-global-reveal-group="work-card"]';
+  const visibleClassName = "is-visible";
+  const instantClassName = "is-instant";
+  const revealCompleteClassName = "is-reveal-complete";
+  const revealCompleteDelay = 680;
+  const revealRootMargin = "0px 0px -10% 0px";
+  const revealThreshold = 0.08;
+  const routeCoverDurationMs = 740;
+
+  function shouldReveal(element) {
+    if (element.closest("[data-no-global-reveal]")) {
+      return false;
+    }
+
+    const revealGroup = element.closest("[data-global-reveal-group]");
+    return !revealGroup || revealGroup === element;
+  }
+
+  function isInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    return rect.top < window.innerHeight && rect.bottom > 0;
+  }
+
+  function collectRevealTargets() {
+    const groupedTargets = Array.from(document.querySelectorAll(groupedRevealSelector))
+      .filter(shouldReveal)
+      .map((element) => ({ element, type: "work-card" }));
+    const textTargets = Array.from(document.querySelectorAll(textSelector))
+      .filter(shouldReveal)
+      .map((element) => ({ element, type: "text" }));
+    const imageTargets = Array.from(document.querySelectorAll(imageSelector))
+      .filter(shouldReveal)
+      .map((element) => ({ element, type: "image" }));
+
+    return [...groupedTargets, ...textTargets, ...imageTargets];
+  }
+
+  function showTarget(element, revealMode) {
+    element.classList.remove(revealCompleteClassName);
+
+    if (revealMode === "instant") {
+      element.classList.add(instantClassName, revealCompleteClassName);
+    } else {
+      element.classList.remove(instantClassName);
+      window.setTimeout(() => {
+        element.classList.add(revealCompleteClassName);
+      }, revealCompleteDelay);
+    }
+
+    element.classList.add(visibleClassName);
+  }
+
+  function setupReveal() {
+    const targets = collectRevealTargets();
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!("IntersectionObserver" in window) || prefersReducedMotion) {
+      targets.forEach(({ element, type }) => {
+        element.dataset.globalReveal = type;
+        showTarget(element, "instant");
+      });
+      return;
+    }
+
+    targets.forEach(({ element, type }) => {
+      element.dataset.globalReveal = type;
+
+      if (isInViewport(element)) {
+        showTarget(element, "instant");
+        return;
+      }
+
+      element.classList.remove(visibleClassName, instantClassName, revealCompleteClassName);
+    });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) {
+            return;
+          }
+
+          const target = entry.target;
+          // IntersectionObserver 已经能判断进入视口，避免额外挂 scroll 监听来判断方向。
+          showTarget(target, "animated");
+          observer.unobserve(target);
+        });
+      },
+      {
+        rootMargin: revealRootMargin,
+        threshold: revealThreshold,
+      },
+    );
+
+    targets.forEach(({ element }) => {
+      if (!element.classList.contains(visibleClassName)) {
+        observer.observe(element);
+      }
+    });
+
+  }
+
+  function setupNavigation() {
+    const header = document.querySelector("[data-site-nav]");
+    const toggle = document.querySelector("[data-menu-toggle]");
+    const toggleLine = document.querySelector("[data-menu-toggle-line]");
+    const mobileMenu = document.querySelector("[data-mobile-menu]");
+    const navLinks = Array.from(document.querySelectorAll("[data-nav-link]"));
+    const logo = document.querySelector("[data-nav-logo]");
+    let isOpen = false;
+    let isHidden = false;
+    let lastScrollY = window.scrollY;
+    let animationFrameId = 0;
+
+    function setMenuOpen(nextIsOpen) {
+      isOpen = nextIsOpen;
+      toggle?.setAttribute("aria-expanded", String(isOpen));
+      toggle?.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+      toggleLine?.classList.toggle("is-open", isOpen);
+      mobileMenu?.classList.toggle("is-open", isOpen);
+    }
+
+    function setNavHidden(nextIsHidden) {
+      if (!header || isHidden === nextIsHidden) {
+        return;
+      }
+
+      isHidden = nextIsHidden;
+      header.classList.toggle("-translate-y-full", isHidden);
+      header.classList.toggle("translate-y-0", !isHidden);
+    }
+
+    function syncActiveHref() {
+      const currentPath = window.location.pathname;
+      const activeHref = window.location.hash || (currentPath === "/" ? "/" : currentPath);
+
+      navLinks.forEach((link) => {
+        const isActive = link.dataset.activeHref === activeHref;
+        link.classList.toggle("text-ink", isActive);
+        link.classList.toggle("after:scale-x-100", isActive);
+      });
+    }
+
+    function scrollToTopImmediately() {
+      const htmlElement = document.documentElement;
+      const previousScrollBehavior = htmlElement.style.scrollBehavior;
+      htmlElement.style.setProperty("scroll-behavior", "auto");
+      window.scrollTo(0, 0);
+
+      if (previousScrollBehavior) {
+        htmlElement.style.setProperty("scroll-behavior", previousScrollBehavior);
+      } else {
+        htmlElement.style.removeProperty("scroll-behavior");
+      }
+
+      setNavHidden(false);
+      lastScrollY = 0;
+    }
+
+    function updateNavVisibility() {
+      const currentScrollY = window.scrollY;
+      const scrollDelta = currentScrollY - lastScrollY;
+
+      if (isOpen) {
+        setNavHidden(false);
+        lastScrollY = currentScrollY;
+        animationFrameId = 0;
+        return;
+      }
+
+      if (Math.abs(scrollDelta) > 8) {
+        setNavHidden(scrollDelta > 0 && currentScrollY > 96);
+        lastScrollY = currentScrollY;
+      }
+
+      animationFrameId = 0;
+    }
+
+    function handleScroll() {
+      if (animationFrameId) {
+        return;
+      }
+
+      animationFrameId = window.requestAnimationFrame(updateNavVisibility);
+    }
+
+    toggle?.addEventListener("click", () => setMenuOpen(!isOpen));
+    navLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        setMenuOpen(false);
+        window.setTimeout(syncActiveHref, 0);
+      });
+    });
+    logo?.addEventListener("click", (event) => {
+      if (window.location.pathname !== "/") {
+        return;
+      }
+
+      event.preventDefault();
+      window.history.pushState(null, "", "/");
+      setMenuOpen(false);
+      syncActiveHref();
+      scrollToTopImmediately();
+    });
+
+    window.addEventListener("hashchange", syncActiveHref);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    header?.classList.add("translate-y-0");
+    syncActiveHref();
+  }
+
+  function setupBackToTop() {
+    const button = document.querySelector("[data-back-to-top]");
+    if (!button) {
+      return;
+    }
+
+    let lastScrollY = window.scrollY;
+    let animationFrameId = 0;
+
+    function setVisible(isVisible) {
+      button.classList.toggle("is-visible", isVisible);
+      button.setAttribute("aria-hidden", String(!isVisible));
+      button.setAttribute("tabindex", isVisible ? "0" : "-1");
+    }
+
+    function updateVisibility() {
+      const currentScrollY = window.scrollY;
+      const revealScrollY = window.innerHeight / 4;
+      const scrollDelta = currentScrollY - lastScrollY;
+
+      if (currentScrollY <= revealScrollY || currentScrollY <= 0) {
+        setVisible(false);
+        lastScrollY = currentScrollY;
+        animationFrameId = 0;
+        return;
+      }
+
+      if (Math.abs(scrollDelta) > 8) {
+        setVisible(scrollDelta > 0);
+        lastScrollY = currentScrollY;
+      }
+
+      animationFrameId = 0;
+    }
+
+    function handleScroll() {
+      if (animationFrameId) {
+        return;
+      }
+
+      animationFrameId = window.requestAnimationFrame(updateVisibility);
+    }
+
+    button.addEventListener("click", () => {
+      setVisible(false);
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
+    });
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    updateVisibility();
+  }
+
+  function getInternalHref(anchor) {
+    const url = new URL(anchor.href);
+
+    if (url.origin !== window.location.origin) {
+      return null;
+    }
+
+    if (anchor.target && anchor.target !== "_self") {
+      return null;
+    }
+
+    const currentPath = `${window.location.pathname}${window.location.search}`;
+    const nextPath = `${url.pathname}${url.search}`;
+
+    if (nextPath === currentPath && url.hash) {
+      return null;
+    }
+
+    if (nextPath === currentPath && !url.hash) {
+      return null;
+    }
+
+    return `${url.pathname}${url.search}${url.hash}`;
+  }
+
+  function setupRouteTransition() {
+    const overlay = document.querySelector("[data-route-transition-overlay]");
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!overlay) {
+      return;
+    }
+
+    overlay.classList.toggle("is-reduced-motion", prefersReducedMotion);
+
+    document.addEventListener(
+      "click",
+      (event) => {
+        if (event.defaultPrevented || event.button !== 0) {
+          return;
+        }
+
+        if (event.metaKey || event.altKey || event.ctrlKey || event.shiftKey) {
+          return;
+        }
+
+        const target = event.target;
+        if (!(target instanceof Element)) {
+          return;
+        }
+
+        const anchor = target.closest("a[href]");
+        if (!anchor) {
+          return;
+        }
+
+        const href = getInternalHref(anchor);
+        if (!href) {
+          return;
+        }
+
+        event.preventDefault();
+        overlay.classList.add("is-covering");
+        window.setTimeout(() => {
+          window.location.href = href;
+        }, prefersReducedMotion ? 180 : routeCoverDurationMs);
+      },
+      true,
+    );
+  }
+
+  function initSite() {
+    setupReveal();
+    setupNavigation();
+    setupBackToTop();
+    setupRouteTransition();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initSite, { once: true });
+  } else {
+    initSite();
+  }
+</script>

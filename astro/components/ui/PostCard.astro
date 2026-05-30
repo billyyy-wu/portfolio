@@ -1,0 +1,53 @@
+---
+import { coverAspectBySlug, getArticleHref, type ArticleEntry } from "~/lib/articles";
+
+interface Props {
+  article: ArticleEntry;
+  priority?: boolean;
+  index?: number;
+}
+
+const { article, priority = false, index = 0 } = Astro.props;
+const href = getArticleHref(article);
+const isExternal = Boolean(article.data.externalUrl);
+const coverAspect = coverAspectBySlug[article.id] ?? "aspect-[352.66/326.2]";
+const linkAttrs = isExternal ? { target: "_blank", rel: "noreferrer" } : {};
+const revealDelay = `${(index % 3) * 55}ms`;
+---
+
+<article
+  data-global-reveal-group="work-card"
+  data-article-slug={article.id}
+  style={`--reveal-delay: ${revealDelay};`}
+  class="relative z-0 mb-16 break-inside-avoid px-3 md:hover:z-30 md:px-5"
+>
+  <a
+    href={href}
+    class="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4"
+    {...linkAttrs}
+  >
+    {article.data.cover ? (
+      <div class:list={[
+        "relative z-0 mb-4 w-full overflow-visible bg-transparent md:group-hover:z-20",
+        coverAspect,
+      ]}>
+        <img
+          src={article.data.cover}
+          alt={article.data.coverAlt ?? article.data.title}
+          loading={priority ? "eager" : "lazy"}
+          fetchpriority={priority ? "high" : "auto"}
+          decoding="async"
+          sizes="(min-width: 1024px) 352px, (min-width: 640px) 45vw, 100vw"
+          class="absolute inset-0 size-full object-cover transition duration-[280ms] ease-[cubic-bezier(0.22,1,0.36,1)] md:group-hover:z-20 md:group-hover:-rotate-3 md:group-hover:scale-105 md:group-hover:shadow-[0_18px_34px_rgba(0,0,0,0.14)] md:group-hover:will-change-transform"
+        />
+      </div>
+    ) : null}
+
+    <h3 class="mb-1 text-[24px] font-bold leading-[1.2] tracking-[-0.6px] text-ink">
+      {article.data.title}
+    </h3>
+    <p class="mb-4 text-[18px] font-medium leading-[1.8] tracking-[-0.45px] text-neutral-600">
+      {article.data.description}
+    </p>
+  </a>
+</article>

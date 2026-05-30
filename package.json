@@ -1,23 +1,29 @@
 {
   "name": "portfolio",
   "version": "1.0.0",
-  "description": "A high-performance portfolio website built with Next.js App Router, Tailwind CSS, Framer Motion, and local MDX content.",
+  "description": "A high-performance portfolio website built with Astro, Tailwind CSS, and local MDX content.",
   "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "next:dev": "next dev",
+    "next:build": "next build",
+    "next:start": "next start",
     "font:subset": "node scripts/subset-font.mjs",
-    "start": "next start",
+    "start": "astro preview",
     "lint": "eslint ."
   },
   "keywords": [
     "portfolio",
-    "nextjs",
+    "astro",
     "mdx"
   ],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@astrojs/mdx": "^6.0.1",
+    "astro": "^6.4.2",
     "clsx": "^2.1.1",
     "gray-matter": "^4.0.3",
     "next": "^16.2.6",

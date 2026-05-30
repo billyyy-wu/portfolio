@@ -12,7 +12,8 @@ const fontkitModule = await import(
 const fontkitDefault = fontkitModule.default?.default ?? fontkitModule.default;
 const fontFromBuffer = fontkitDefault.default || fontkitDefault;
 
-const sourceFont = path.join(root, "public", "fonts", "oppo-sans-4.0.woff2");
+// 源字体仅用于生成子集，放在非 public 目录，避免把 13MB 原始字体部署到线上。
+const sourceFont = path.join(root, "assets", "fonts", "source", "oppo-sans-4.0.woff2");
 const outputFont = path.join(root, "public", "fonts", "oppo-sans-subset.ttf");
 const scanDirectories = ["app", "components", "content"].map((directory) =>
   path.join(root, directory),

@@ -1,0 +1,250 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Oppo Sans Subset";
+  src: url("/fonts/oppo-sans-subset.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gotham Medium";
+  src: url("/fonts/gotham-medium.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 500;
+}
+
+:root {
+  color-scheme: light;
+  --font-oppo-sans: "Oppo Sans Subset";
+  --font-gotham-medium: "Gotham Medium";
+  /* 全局 reveal 统一令牌：文字、图片和作品卡片共用，避免维护多套动效数值。 */
+  --reveal-standard-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --reveal-opacity-duration: 520ms;
+  --reveal-transform-duration: 620ms;
+  --reveal-offset-y: 24px;
+  --reveal-opacity-ease: ease-out;
+  --reveal-transform-ease: var(--reveal-standard-ease);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background: #ffffff;
+  color: #525252;
+  font-weight: 500;
+}
+
+::selection {
+  background: #ff6e99;
+  color: #ffffff;
+}
+
+[data-global-reveal] {
+  will-change: opacity, transform;
+}
+
+[data-global-reveal].is-reveal-complete {
+  will-change: auto;
+}
+
+[data-global-reveal="text"]:not(.is-visible) {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-offset-y), 0);
+}
+
+[data-global-reveal="text"].is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity var(--reveal-opacity-duration) var(--reveal-opacity-ease),
+    transform var(--reveal-transform-duration) var(--reveal-transform-ease);
+}
+
+[data-global-reveal="image"]:not(.is-visible),
+[data-global-reveal="work-card"]:not(.is-visible) {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-offset-y), 0);
+}
+
+[data-global-reveal="image"].is-visible,
+[data-global-reveal="work-card"].is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity var(--reveal-opacity-duration) var(--reveal-opacity-ease),
+    transform var(--reveal-transform-duration) var(--reveal-transform-ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-global-reveal].is-instant {
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-global-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .selected-work-arrow {
+    animation: none !important;
+  }
+}
+
+@layer utilities {
+  @keyframes selected-work-arrow-step {
+    0%,
+    58%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+
+    70% {
+      transform: translate3d(0, 5px, 0);
+    }
+
+    82% {
+      transform: translate3d(0, -1.5px, 0);
+    }
+
+    92% {
+      transform: translate3d(0, 1px, 0);
+    }
+  }
+
+  .selected-work-arrow {
+    /* 仅移动单个 SVG 容器的 transform，不触发布局或重绘密集计算。 */
+    animation: selected-work-arrow-step 2s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+    backface-visibility: hidden;
+    contain: paint;
+    will-change: transform;
+  }
+
+  @keyframes route-panel-cover {
+    0% {
+      opacity: 0;
+      transform: scaleX(0.08);
+    }
+
+    28% {
+      opacity: 0.4;
+    }
+
+    100% {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes route-cover-fade {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  .route-transition-overlay {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    overflow: hidden;
+    background: transparent;
+    opacity: 0;
+  }
+
+  .route-transition-overlay.is-covering {
+    opacity: 1;
+  }
+
+  .route-transition-panel {
+    display: block;
+    height: 100%;
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: left;
+    background: #ffffff;
+  }
+
+  .route-transition-overlay.is-covering .route-transition-panel {
+    animation: route-panel-cover var(--route-panel-duration) cubic-bezier(0.22, 1, 0.36, 1) var(--route-panel-delay) both;
+  }
+
+  .route-transition-overlay.is-reduced-motion {
+    display: block;
+    background: #ffffff;
+  }
+
+  .route-transition-overlay.is-reduced-motion.is-covering {
+    animation: route-cover-fade 140ms ease-out both;
+  }
+
+  .back-to-top-button {
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.86);
+    transform-origin: center;
+    transition:
+      opacity 120ms ease-out,
+      transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+      color 150ms ease,
+      box-shadow 150ms ease;
+    will-change: opacity, transform;
+  }
+
+  .back-to-top-button.is-visible {
+    pointer-events: auto;
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .mobile-menu {
+    pointer-events: none;
+    opacity: 0;
+    transform: translate3d(0, -0.5rem, 0);
+  }
+
+  .mobile-menu.is-open {
+    pointer-events: auto;
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .mobile-menu-line.is-open {
+    transform: rotate(90deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .route-transition-panel,
+    .route-transition-overlay.is-reduced-motion {
+      animation-duration: 1ms !important;
+    }
+
+    .back-to-top-button {
+      transition:
+        opacity 120ms ease-out,
+        color 150ms ease,
+        box-shadow 150ms ease;
+      transform: none;
+    }
+  }
+
+  .site-gradient-top {
+    background: linear-gradient(180deg, #fbeeee 0%, #fbeeee 82%, #ffffff 100%);
+  }
+
+  .site-gradient-bottom {
+    background: linear-gradient(180deg, #ffffff 0%, #fbeeee 100%);
+  }
+}

@@ -1,0 +1,47 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import MdxAnchor from "~/components/mdx/MdxAnchor.astro";
+import MdxImage from "~/components/mdx/MdxImage.astro";
+
+export async function getStaticPaths() {
+  const articles = await getCollection("articles");
+
+  return articles.map((article) => ({
+    params: { slug: article.id },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+const formattedDate = new Intl.DateTimeFormat("en", {
+  dateStyle: "medium",
+}).format(new Date(article.data.date));
+---
+
+<BaseLayout
+  title={article.data.title}
+  description={article.data.description}
+  image={article.data.cover}
+>
+  <article class="mx-auto w-full max-w-3xl px-4 py-16 md:py-24">
+    <div>
+      <p class="mb-4 text-sm font-black uppercase text-accent">
+        {formattedDate}
+      </p>
+      <h1 class="text-4xl font-black leading-tight text-ink md:text-6xl">
+        {article.data.title}
+      </h1>
+      <p class="mt-6 text-xl leading-9 text-neutral-600">
+        {article.data.description}
+      </p>
+    </div>
+
+    <div>
+      <div class="prose prose-neutral mt-12 max-w-none prose-headings:text-ink prose-headings:font-black prose-p:leading-8 prose-a:text-accent">
+        <Content components={{ a: MdxAnchor, img: MdxImage }} />
+      </div>
+    </div>
+  </article>
+</BaseLayout>

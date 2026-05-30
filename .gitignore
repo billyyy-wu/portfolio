@@ -3,6 +3,7 @@ node_modules/
 
 # Next.js 构建产物和缓存只属于本地/部署环境，不进入版本库。
 .next/
+.astro/
 out/
 
 # 生产构建与调试过程中生成的临时文件。

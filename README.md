@@ -1,6 +1,6 @@
 # Portfolio 网站维护说明
 
-这是一个基于 Next.js App Router 和本地 MDX 内容构建的作品集网站。首页作品列表和文章详情页都由 `content/articles/` 目录中的 `.mdx` 文件驱动。
+这是一个基于 Astro、Tailwind CSS 和本地 MDX 内容构建的作品集网站。首页作品列表和文章详情页都由 `content/articles/` 目录中的 `.mdx` 文件驱动。
 
 ## 本地开发
 
@@ -19,7 +19,7 @@ npm run dev
 打开：
 
 ```text
-http://localhost:3000
+http://localhost:4321
 ```
 
 部署前可以本地构建检查：
@@ -27,6 +27,29 @@ http://localhost:3000
 ```bash
 npm run build
 ```
+
+旧 Next.js 实现仍保留在仓库中，如需回退检查可以使用：
+
+```bash
+npm run next:dev
+npm run next:build
+```
+
+## 当前架构
+
+```text
+astro/
+  components/        Astro 静态组件和少量原生交互脚本
+  content.config.ts  Astro Content Collections 配置
+  layouts/           全站布局
+  lib/               内容排序和展示辅助函数
+  pages/             Astro 路由页面
+  styles/            全局 Tailwind/CSS
+content/articles/    作品和文章 MDX 内容
+public/images/articles/ 本地作品封面
+```
+
+默认生产站点由 Astro 构建。旧 Next.js 代码仍保留在 `app/`、`components/`、`lib/` 中，主要用于回退参考；新增页面和交互优先改 `astro/`。
 
 ## 使用 MDX 更新网页内容
 
@@ -55,7 +78,7 @@ content/articles/my-new-work.mdx
 title: "作品标题"
 date: "2026-05-26"
 description: "首页卡片和 SEO 中显示的作品简介。"
-cover: "https://example.com/cover.webp"
+cover: "/images/articles/my-new-work.webp"
 coverAlt: "封面图的文字描述。"
 order: 1
 ---
@@ -72,7 +95,7 @@ order: 1
 - `title`：首页卡片标题和详情页标题。
 - `date`：文章日期，建议使用 `YYYY-MM-DD` 格式。
 - `description`：首页卡片简介和页面 SEO 描述。
-- `cover`：首页卡片封面图，可以是远程图片 URL，也可以是 `/public` 下的本地图片路径。
+- `cover`：首页卡片封面图，优先使用 `/public` 下的本地图片路径，例如 `/images/articles/my-new-work.webp`。
 - `coverAlt`：封面图的可访问性描述。
 - `order`：可选，数字越小首页越靠前；不填写时按日期倒序排列。
 - `externalUrl`：可选，填写后首页卡片会跳转到外部链接。
@@ -84,17 +107,19 @@ order: 1
 把图片放到 `public/` 目录下，例如：
 
 ```text
-public/images/my-cover.webp
+public/images/articles/my-cover.webp
 ```
 
 然后在 MDX frontmatter 中这样引用：
 
 ```mdx
 ---
-cover: "/images/my-cover.webp"
+cover: "/images/articles/my-cover.webp"
 coverAlt: "我的项目封面图"
 ---
 ```
+
+如果新增封面的比例和现有卡片不同，需要在 `astro/lib/articles.ts` 的 `coverAspectBySlug` 中补充对应 slug 的比例，避免首页瀑布流布局跳动。
 
 ## 上传更新到 GitHub
 
@@ -133,7 +158,7 @@ git push
 1. 打开 Vercel Dashboard。
 2. 点击 `Add New...` 或 `New Project`。
 3. 导入 GitHub 仓库 `billyyy-wu/portfolio`。
-4. Framework Preset 选择或自动识别为 `Next.js`。
+4. Framework Preset 选择或自动识别为 `Astro`。
 5. 保持默认构建配置：
 
 ```text

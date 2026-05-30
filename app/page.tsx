@@ -164,7 +164,7 @@ export default function HomePage() {
             </span>
           </FadeUp>
 
-          <div className="columns-1 sm:columns-2 lg:columns-3">
+          <div className="-mx-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {posts.map((post, index) => (
               <FadeUp key={post.slug}>
                 <PostCard post={post} priority={index < 3} />

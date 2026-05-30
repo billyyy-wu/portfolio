@@ -1,0 +1,21 @@
+---
+const knownImageSizes: Record<string, { width: number; height: number }> = {
+  "/images/ai-design-workflow.svg": { width: 1200, height: 860 },
+  "/images/design-trends-2026.svg": { width: 1200, height: 860 },
+  "/images/prompt-library.svg": { width: 1200, height: 860 },
+};
+
+const { class: className, src, alt = "", ...attrs } = Astro.props;
+const imageSize = typeof src === "string" ? knownImageSizes[src] : undefined;
+---
+
+<img
+  {...attrs}
+  src={src}
+  alt={alt}
+  width={attrs.width ?? imageSize?.width}
+  height={attrs.height ?? imageSize?.height}
+  loading="lazy"
+  decoding="async"
+  class:list={["my-10 w-full rounded-lg object-cover", className]}
+/>
