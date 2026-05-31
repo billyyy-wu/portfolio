@@ -9,13 +9,18 @@ const { class: className, src, alt = "", ...attrs } = Astro.props;
 const imageSize = typeof src === "string" ? knownImageSizes[src] : undefined;
 ---
 
-<img
-  {...attrs}
-  src={src}
-  alt={alt}
-  width={attrs.width ?? imageSize?.width}
-  height={attrs.height ?? imageSize?.height}
-  loading="lazy"
-  decoding="async"
-  class:list={["my-10 w-full rounded-lg object-cover", className]}
-/>
+<figure
+  data-global-reveal-group="media-image"
+  class="my-10 overflow-hidden rounded-lg bg-white"
+>
+  <img
+    {...attrs}
+    src={src}
+    alt={alt}
+    width={attrs.width ?? imageSize?.width}
+    height={attrs.height ?? imageSize?.height}
+    loading="lazy"
+    decoding="async"
+    class:list={["block w-full object-cover", className]}
+  />
+</figure>

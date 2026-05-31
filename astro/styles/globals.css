@@ -24,8 +24,10 @@
   --reveal-opacity-duration: 520ms;
   --reveal-transform-duration: 620ms;
   --reveal-offset-y: 24px;
+  --reveal-media-mask-duration: var(--reveal-transform-duration);
   --reveal-opacity-ease: ease-out;
   --reveal-transform-ease: var(--reveal-standard-ease);
+  --reveal-media-mask-ease: var(--reveal-standard-ease);
 }
 
 html {
@@ -66,13 +68,15 @@ body {
 }
 
 [data-global-reveal="image"]:not(.is-visible),
-[data-global-reveal="work-card"]:not(.is-visible) {
+[data-global-reveal="work-card"]:not(.is-visible),
+[data-global-reveal="media-image"]:not(.is-visible) {
   opacity: 0;
   transform: translate3d(0, var(--reveal-offset-y), 0);
 }
 
 [data-global-reveal="image"].is-visible,
-[data-global-reveal="work-card"].is-visible {
+[data-global-reveal="work-card"].is-visible,
+[data-global-reveal="media-image"].is-visible {
   opacity: 1;
   transform: translate3d(0, 0, 0);
   transition:
@@ -81,8 +85,52 @@ body {
   transition-delay: var(--reveal-delay, 0ms);
 }
 
+[data-global-reveal="work-card"],
+[data-global-reveal="media-image"] {
+  position: relative;
+}
+
+[data-global-reveal="work-card"]::after,
+[data-global-reveal="media-image"]::after {
+  /* 独立遮罩自己从左到右退场，不裁切真实图片内容。 */
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: #ffffff;
+  opacity: 1;
+  transform: scaleX(1);
+  transform-origin: right;
+}
+
+[data-global-reveal="work-card"].is-visible::after,
+[data-global-reveal="media-image"].is-visible::after {
+  opacity: 1;
+  transform: scaleX(0);
+  transition: transform var(--reveal-media-mask-duration) var(--reveal-media-mask-ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-global-reveal="work-card"].is-reveal-complete::after,
+[data-global-reveal="media-image"].is-reveal-complete::after {
+  display: none;
+}
+
 [data-global-reveal].is-instant {
   transition: none !important;
+}
+
+[data-selected-work-grid] {
+  align-items: start;
+}
+
+[data-selected-work-grid].is-masonry-ready {
+  grid-auto-rows: var(--selected-work-masonry-row, 8px);
+}
+
+[data-selected-work-grid] > [data-global-reveal-group="work-card"] {
+  align-self: start;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -90,6 +138,10 @@ body {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
+  }
+
+  [data-global-reveal]::after {
+    display: none !important;
   }
 
   .selected-work-arrow {
