@@ -23,16 +23,15 @@
   ].join(",");
 
   const imageSelector = "main img, footer img";
-  const groupedRevealSelector =
-    '[data-global-reveal-group="intro"], [data-global-reveal-group="work-card"], [data-global-reveal-group="media-image"]';
+  const groupedRevealSelector = "[data-global-reveal-group]";
   const visibleClassName = "is-visible";
   const instantClassName = "is-instant";
   const revealCompleteClassName = "is-reveal-complete";
   const revealCompleteDelay = 900;
-  const revealRootMargin = "0px 0px -10% 0px";
-  const revealThreshold = 0.08;
+  const revealRootMargin = "0px 0px 15% 0px";
+  const revealThreshold = 0.04;
   const revealFallbackMargin = 160;
-  const revealStaggerStep = 50;
+  const revealStaggerStep = 60;
   const routeCoverDurationMs = 660;
 
   function shouldReveal(element) {

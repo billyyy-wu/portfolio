@@ -48,14 +48,14 @@ function getTextMeasure(text: string) {
     }
 
     if (/\s/.test(character)) {
-      return width + 0.28;
+      return width + 0.24;
     }
 
     if (/[A-Z0-9]/.test(character)) {
-      return width + 0.62;
+      return width + 0.56;
     }
 
-    return width + 0.54;
+    return width + 0.46;
   }, 0);
 }
 
@@ -64,10 +64,19 @@ function estimateLineCount(text: string, contentWidth: number, fontSize: number)
   return Math.max(1, Math.ceil(getTextMeasure(text) / lineCapacity));
 }
 
-export function getArticleGridSpan(article: ArticleEntry, breakpoint: "sm" | "lg" = "lg") {
-  const referenceContentWidth = breakpoint === "lg" ? 347 : 332;
+export function getArticleGridSpan(
+  article: ArticleEntry,
+  breakpoint: "sm" | "md" | "lg" | "xl" = "xl",
+) {
+  const referenceContentWidthByBreakpoint = {
+    sm: 330,
+    md: 430,
+    lg: 330,
+    xl: 358,
+  };
+  const referenceContentWidth = referenceContentWidthByBreakpoint[breakpoint];
   const gridRowSize = 4;
-  const targetCardGap = breakpoint === "lg" ? 48 : 44;
+  const targetCardGap = 48;
   const imageHeight = referenceContentWidth * getCoverRatio(article.id);
   const titleHeight = estimateLineCount(article.data.title, referenceContentWidth, 24) * 29;
   const descriptionHeight =

@@ -7,7 +7,9 @@ interface Props {
   revealPreload?: boolean;
   index?: number;
   gridSpanSm?: number;
+  gridSpanMd?: number;
   gridSpanLg?: number;
+  gridSpanXl?: number;
 }
 
 const {
@@ -16,7 +18,9 @@ const {
   revealPreload = false,
   index = 0,
   gridSpanSm,
+  gridSpanMd,
   gridSpanLg,
+  gridSpanXl,
 } = Astro.props;
 const href = getArticleHref(article);
 const isExternal = Boolean(article.data.externalUrl);
@@ -26,7 +30,9 @@ const revealDelay = `${(index % 3) * 55}ms`;
 const style = [
   `--reveal-delay: ${revealDelay};`,
   typeof gridSpanSm === "number" ? `--work-card-row-span-sm: ${gridSpanSm};` : "",
+  typeof gridSpanMd === "number" ? `--work-card-row-span-md: ${gridSpanMd};` : "",
   typeof gridSpanLg === "number" ? `--work-card-row-span-lg: ${gridSpanLg};` : "",
+  typeof gridSpanXl === "number" ? `--work-card-row-span-xl: ${gridSpanXl};` : "",
 ].join(" ");
 ---
 

@@ -11,12 +11,15 @@ interface Props {
   image?: string;
 }
 
+// 统一默认页面标题，确保浏览器标题和分享标题保持一致。
+const defaultPageTitle = "Billy Wu › Product Designer";
+
 const {
-  title = "Cathrine Understrup | Portfolio",
+  title = defaultPageTitle,
   description = "Freelance art director and designer portfolio built with Astro, Tailwind CSS, and MDX.",
   image,
 } = Astro.props;
-const pageTitle = title === "Cathrine Understrup | Portfolio" ? title : `${title} | Portfolio`;
+const pageTitle = title === defaultPageTitle ? title : `${title} | Portfolio`;
 const panelDurations = [0.05, 0.12, 0.12, 0.12, 0.05];
 const panelGap = 0.03;
 const panelDelays = panelDurations.map((_, index) =>

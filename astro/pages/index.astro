@@ -54,12 +54,9 @@ const articles = sortArticles(await getCollection("articles"));
 
 <BaseLayout>
   <section class="hero-background-fade site-gradient-top pb-16 pt-12 md:min-h-[844px] md:pb-24 md:pt-32">
-    <div
-      data-global-reveal-group="intro"
-      class="mx-auto flex w-full max-w-site flex-col gap-16 px-4"
-    >
+    <div class="mx-auto flex w-full max-w-site flex-col gap-16 px-4">
       <div class="flex w-full flex-col gap-8">
-        <div>
+        <div data-global-reveal-group="hero-title">
           <h1 class="text-4xl font-bold leading-[1.3] tracking-[-1.44px] text-ink sm:text-[40px] md:text-[60px] md:leading-[78px] md:tracking-[-2.4px]">
             Independent art director, designer,
             <br class="hidden md:block" /> educator and founder of{" "}
@@ -75,7 +72,7 @@ const articles = sortArticles(await getCollection("articles"));
           </h1>
         </div>
 
-        <div>
+        <div data-global-reveal-group="hero-description">
           <p class="text-lg font-medium leading-8 tracking-[-0.45px] text-neutral-600 md:text-[23.8px] md:leading-[42px] md:tracking-[-0.6px]">
             With more than 10 years of experience in branding, advertising
             and visual design, I work as an independent creative for clients
@@ -84,7 +81,7 @@ const articles = sortArticles(await getCollection("articles"));
         </div>
       </div>
 
-      <div>
+      <div data-global-reveal-group="hero-action">
         <a
           href="#connect"
           class="group inline-flex h-[68px] items-center rounded-full bg-neutral-900 py-3 pl-3 pr-7 text-[20px] font-medium leading-7 text-white"
@@ -120,7 +117,7 @@ const articles = sortArticles(await getCollection("articles"));
         </a>
       </div>
 
-      <div>
+      <div data-global-reveal-group="hero-logos">
         <div class="overflow-hidden py-12 [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
           <ul class="flex min-h-14 min-w-max items-center">
             {[...logoItems, ...logoItems, ...logoItems].map((item, index) => (
@@ -146,7 +143,11 @@ const articles = sortArticles(await getCollection("articles"));
 
   <section id="resume" class="bg-white py-12 md:overflow-hidden">
     <div class="mx-auto w-full max-w-site px-4">
-      <div class="mb-8 flex items-center">
+      <div
+        data-global-reveal-group="section-heading"
+        data-reveal-preload="true"
+        class="mb-8 flex items-center"
+      >
         <h2 class="text-3xl font-bold leading-[1.2] tracking-[-0.6px] text-ink md:text-[32px]">
           Selected work
         </h2>
@@ -178,7 +179,9 @@ const articles = sortArticles(await getCollection("articles"));
             revealPreload={index < 3}
             index={index}
             gridSpanSm={getArticleGridSpan(article, "sm")}
+            gridSpanMd={getArticleGridSpan(article, "md")}
             gridSpanLg={getArticleGridSpan(article, "lg")}
+            gridSpanXl={getArticleGridSpan(article, "xl")}
           />
         ))}
       </div>
