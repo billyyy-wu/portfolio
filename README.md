@@ -28,11 +28,10 @@ http://localhost:4321
 npm run build
 ```
 
-旧 Next.js 实现仍保留在仓库中，如需回退检查可以使用：
+更新内容后如需刷新字体子集：
 
 ```bash
-npm run next:dev
-npm run next:build
+npm run font:subset
 ```
 
 ## 当前架构
@@ -49,7 +48,7 @@ content/articles/    作品和文章 MDX 内容
 public/images/articles/ 本地作品封面
 ```
 
-默认生产站点由 Astro 构建。旧 Next.js 代码仍保留在 `app/`、`components/`、`lib/` 中，主要用于回退参考；新增页面和交互优先改 `astro/`。
+默认生产站点由 Astro 构建。新增页面、交互和内容展示逻辑都优先改 `astro/`，文章内容继续由 `content/articles/` 管理。
 
 ## 使用 MDX 更新网页内容
 

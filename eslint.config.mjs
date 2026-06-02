@@ -1,12 +1,22 @@
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTypescript from "eslint-config-next/typescript";
+import js from "@eslint/js";
+import tseslint from "typescript-eslint";
 
-const eslintConfig = [
-  ...nextVitals,
-  ...nextTypescript,
+const eslintConfig = tseslint.config(
   {
-    ignores: [".astro/**", ".next/**", "dist/**", "node_modules/**", "out/**"],
+    ignores: [".astro/**", "dist/**", "node_modules/**", "out/**"],
   },
-];
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  {
+    files: ["**/*.{js,mjs}"],
+    languageOptions: {
+      globals: {
+        Buffer: "readonly",
+        console: "readonly",
+        process: "readonly",
+      },
+    },
+  },
+);
 
 export default eslintConfig;

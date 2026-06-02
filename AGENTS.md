@@ -2,7 +2,7 @@
 
 ## 项目概览
 
-这是一个 Astro 静态作品集网站。当前生产架构以 `astro/` 为源码目录，内容来自 `content/articles/*.mdx`，静态资源放在 `public/`。旧 Next.js App Router 实现仍保留在 `app/`、`components/`、`lib/` 中，仅作为回退参考，不作为默认开发目标。
+这是一个 Astro 静态作品集网站。当前生产架构以 `astro/` 为源码目录，内容来自 `content/articles/*.mdx`，静态资源放在 `public/`。
 
 ## 常用命令
 
@@ -10,7 +10,7 @@
 - `npm run build`：构建 Astro 静态站点到 `dist/`。
 - `npm run preview`：预览 Astro 构建产物。
 - `npm run lint`：运行 ESLint。
-- `npm run next:dev` / `npm run next:build` / `npm run next:start`：仅用于检查旧 Next.js 实现。
+- `npm run font:subset`：根据 Astro 源码和 MDX 内容重新生成 OPPO Sans 子集字体。
 
 ## 目录职责
 
@@ -46,7 +46,6 @@
 - 不引入重型动效库；动效优先使用 CSS `opacity` 和 `transform`。
 - 避免长期 `will-change`、大面积阴影动画和高成本裁切动画。
 - 新增代码注释默认使用中文，只在解释意图或复杂逻辑时添加。
-- 不删除旧 Next.js 实现，除非用户明确要求清理。
 
 ## 验证要求
 
@@ -55,12 +54,6 @@
 ```bash
 npm run build
 npm run lint
-```
-
-涉及兼容旧实现、MDX frontmatter 或公共资源路径时，也运行：
-
-```bash
-npm run next:build
 ```
 
 关键验收点：

@@ -7,9 +7,6 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "next:dev": "next dev",
-    "next:build": "next build",
-    "next:start": "next start",
     "font:subset": "node scripts/subset-font.mjs",
     "start": "astro preview",
     "lint": "eslint ."
@@ -23,25 +20,17 @@
   "license": "ISC",
   "dependencies": {
     "@astrojs/mdx": "^6.0.1",
-    "astro": "^6.4.2",
-    "clsx": "^2.1.1",
-    "gray-matter": "^4.0.3",
-    "next": "^16.2.6",
-    "next-mdx-remote": "^6.0.0",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
-    "tailwind-merge": "^3.6.0"
+    "astro": "^6.4.2"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^25.9.1",
-    "@types/react": "^19.2.15",
-    "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.5.0",
     "eslint": "^9.39.4",
-    "eslint-config-next": "^16.2.6",
+    "fontkit": "^2.0.4",
     "postcss": "^8.5.15",
     "tailwindcss": "^3.4.19",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.60.1"
   }
 }

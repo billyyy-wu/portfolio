@@ -3,22 +3,16 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { create as createFont } from "fontkit";
 
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(currentDirectory, "..");
-const fontkitModule = await import(
-  "../node_modules/next/dist/compiled/@next/font/dist/fontkit/index.js"
-);
-const fontkitDefault = fontkitModule.default?.default ?? fontkitModule.default;
-const fontFromBuffer = fontkitDefault.default || fontkitDefault;
 
 // 源字体仅用于生成子集，放在非 public 目录，避免把 13MB 原始字体部署到线上。
 const sourceFont = path.join(root, "assets", "fonts", "source", "oppo-sans-4.0.woff2");
 const outputFont = path.join(root, "public", "fonts", "oppo-sans-subset.ttf");
-const scanDirectories = ["app", "components", "content"].map((directory) =>
-  path.join(root, directory),
-);
-const scanExtensions = new Set([".css", ".mdx", ".ts", ".tsx"]);
+const scanDirectories = ["astro", "content"].map((directory) => path.join(root, directory));
+const scanExtensions = new Set([".astro", ".css", ".js", ".mdx", ".mjs", ".ts"]);
 
 // 保留常用中文 UI 标点和备用字符，避免内容轻微变化后马上缺字。
 const safeText = `
@@ -74,7 +68,7 @@ function buildSubset() {
   }
 
   const sourceBuffer = fs.readFileSync(sourceFont);
-  const font = fontFromBuffer(sourceBuffer);
+  const font = createFont(sourceBuffer);
   const subset = font.createSubset();
   const text = collectSiteText();
   const glyphIds = new Set();
@@ -93,7 +87,7 @@ function buildSubset() {
   const outputBuffer = Buffer.from(subset.encode());
 
   if (outputBuffer.subarray(0, 4).toString("latin1") === "true") {
-    // Next 字体解析器期望标准 TrueType sfnt 版本号，而不是旧式 Apple "true" 标记。
+    // 浏览器更稳定识别标准 TrueType sfnt 版本号，而不是旧式 Apple "true" 标记。
     outputBuffer.writeUInt32BE(0x00010000, 0);
   }
 
