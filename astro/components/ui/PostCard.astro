@@ -5,21 +5,28 @@ interface Props {
   article: ArticleEntry;
   priority?: boolean;
   index?: number;
+  gridSpanSm?: number;
+  gridSpanLg?: number;
 }
 
-const { article, priority = false, index = 0 } = Astro.props;
+const { article, priority = false, index = 0, gridSpanSm, gridSpanLg } = Astro.props;
 const href = getArticleHref(article);
 const isExternal = Boolean(article.data.externalUrl);
 const coverAspect = coverAspectBySlug[article.id] ?? "aspect-[352.66/326.2]";
 const linkAttrs = isExternal ? { target: "_blank", rel: "noreferrer" } : {};
 const revealDelay = `${(index % 3) * 55}ms`;
+const style = [
+  `--reveal-delay: ${revealDelay};`,
+  typeof gridSpanSm === "number" ? `--work-card-row-span-sm: ${gridSpanSm};` : "",
+  typeof gridSpanLg === "number" ? `--work-card-row-span-lg: ${gridSpanLg};` : "",
+].join(" ");
 ---
 
 <article
   data-global-reveal-group="work-card"
   data-article-slug={article.id}
-  style={`--reveal-delay: ${revealDelay};`}
-  class="relative z-0 mb-16 break-inside-avoid px-3 md:hover:z-30 md:px-5"
+  style={style}
+  class="relative z-0 mb-12 break-inside-avoid px-3 sm:mb-0 md:hover:z-30 md:px-5"
 >
   <a
     href={href}
@@ -46,7 +53,7 @@ const revealDelay = `${(index % 3) * 55}ms`;
     <h3 class="mb-1 text-[24px] font-bold leading-[1.2] tracking-[-0.6px] text-ink">
       {article.data.title}
     </h3>
-    <p class="mb-4 text-[18px] font-medium leading-[1.8] tracking-[-0.45px] text-neutral-600">
+    <p class="text-[18px] font-medium leading-[1.8] tracking-[-0.45px] text-neutral-600 sm:min-h-[64.8px]">
       {article.data.description}
     </p>
   </a>

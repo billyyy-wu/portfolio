@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import PostCard from "~/components/ui/PostCard.astro";
-import { sortArticles } from "~/lib/articles";
+import { getArticleGridSpan, sortArticles } from "~/lib/articles";
 
 const logoItems = [
   {
@@ -169,7 +169,13 @@ const articles = sortArticles(await getCollection("articles"));
         class="-mx-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
       >
         {articles.map((article, index) => (
-          <PostCard article={article} priority={index < 3} index={index} />
+          <PostCard
+            article={article}
+            priority={index < 3}
+            index={index}
+            gridSpanSm={getArticleGridSpan(article, "sm")}
+            gridSpanLg={getArticleGridSpan(article, "lg")}
+          />
         ))}
       </div>
     </div>

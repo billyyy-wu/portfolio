@@ -304,72 +304,6 @@
     updateVisibility();
   }
 
-  function setupSelectedWorkMasonry() {
-    const grid = document.querySelector("[data-selected-work-grid]");
-    if (!grid) {
-      return;
-    }
-
-    const items = Array.from(grid.querySelectorAll('[data-global-reveal-group="work-card"]'));
-    const rowSize = 8;
-    let animationFrameId = 0;
-
-    function resetMasonry() {
-      grid.classList.remove("is-masonry-ready");
-      items.forEach((item) => {
-        item.style.gridRowEnd = "";
-      });
-    }
-
-    function updateMasonry() {
-      animationFrameId = 0;
-
-      if (window.matchMedia("(max-width: 639px)").matches) {
-        resetMasonry();
-        return;
-      }
-
-      resetMasonry();
-      grid.style.setProperty("--selected-work-masonry-row", `${rowSize}px`);
-
-      const rowGap = Number.parseFloat(window.getComputedStyle(grid).rowGap) || 0;
-      grid.classList.add("is-masonry-ready");
-
-      items.forEach((item) => {
-        // 只按内容高度换算 grid row span，避免复制 DOM，也避免滚动时持续计算。
-        const itemStyle = window.getComputedStyle(item);
-        const verticalMargins =
-          (Number.parseFloat(itemStyle.marginTop) || 0) +
-          (Number.parseFloat(itemStyle.marginBottom) || 0);
-        const span = Math.ceil((item.scrollHeight + verticalMargins + rowGap) / (rowSize + rowGap));
-        item.style.gridRowEnd = `span ${span}`;
-      });
-    }
-
-    function requestMasonryUpdate() {
-      if (animationFrameId) {
-        return;
-      }
-
-      animationFrameId = window.requestAnimationFrame(updateMasonry);
-    }
-
-    requestMasonryUpdate();
-    window.addEventListener("resize", requestMasonryUpdate, { passive: true });
-
-    if (document.fonts) {
-      document.fonts.ready.then(requestMasonryUpdate);
-    }
-
-    grid.querySelectorAll("img").forEach((image) => {
-      if (image.complete) {
-        return;
-      }
-
-      image.addEventListener("load", requestMasonryUpdate, { once: true });
-    });
-  }
-
   function getInternalHref(anchor) {
     const url = new URL(anchor.href);
 
@@ -443,7 +377,6 @@
 
   function initSite() {
     setupReveal();
-    setupSelectedWorkMasonry();
     setupNavigation();
     setupBackToTop();
     setupRouteTransition();

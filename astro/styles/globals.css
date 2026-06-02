@@ -47,11 +47,12 @@ body {
 }
 
 [data-global-reveal] {
-  will-change: opacity, transform;
+  will-change: auto;
 }
 
-[data-global-reveal].is-reveal-complete {
-  will-change: auto;
+[data-global-reveal].is-visible:not(.is-reveal-complete):not(.is-instant) {
+  /* 只在 reveal 动画进行时预声明合成属性，避免大量未入屏元素长期占用资源。 */
+  will-change: opacity, transform;
 }
 
 [data-global-reveal="text"]:not(.is-visible) {
@@ -112,6 +113,12 @@ body {
   transition-delay: var(--reveal-delay, 0ms);
 }
 
+[data-global-reveal="work-card"].is-visible:not(.is-reveal-complete):not(.is-instant)::after,
+[data-global-reveal="media-image"].is-visible:not(.is-reveal-complete):not(.is-instant)::after {
+  /* 遮罩层只在退场动画阶段启用 will-change，视觉保持不变。 */
+  will-change: transform;
+}
+
 [data-global-reveal="work-card"].is-reveal-complete::after,
 [data-global-reveal="media-image"].is-reveal-complete::after {
   display: none;
@@ -121,16 +128,24 @@ body {
   transition: none !important;
 }
 
-[data-selected-work-grid] {
-  align-items: start;
-}
-
-[data-selected-work-grid].is-masonry-ready {
-  grid-auto-rows: var(--selected-work-masonry-row, 8px);
-}
-
 [data-selected-work-grid] > [data-global-reveal-group="work-card"] {
   align-self: start;
+}
+
+@media (min-width: 640px) {
+  [data-selected-work-grid] {
+    grid-auto-rows: 4px;
+  }
+
+  [data-selected-work-grid] > [data-global-reveal-group="work-card"] {
+    grid-row-end: span var(--work-card-row-span-sm);
+  }
+}
+
+@media (min-width: 1024px) {
+  [data-selected-work-grid] > [data-global-reveal-group="work-card"] {
+    grid-row-end: span var(--work-card-row-span-lg);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
