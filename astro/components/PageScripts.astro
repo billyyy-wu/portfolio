@@ -28,8 +28,8 @@
   const instantClassName = "is-instant";
   const revealCompleteClassName = "is-reveal-complete";
   const revealCompleteDelay = 900;
-  const revealRootMargin = "0px 0px 15% 0px";
-  const revealThreshold = 0.04;
+  const revealRootMargin = "0px 0px 5% 0px";
+  const revealThreshold = 0.2;
   const revealFallbackMargin = 160;
   const revealStaggerStep = 60;
   const routeCoverDurationMs = 660;
@@ -81,6 +81,18 @@
     });
   }
 
+  function markPriorityArticleImage() {
+    const firstArticleImage = document.querySelector(
+      'article [data-global-reveal-group="media-image"]',
+    );
+
+    if (firstArticleImage instanceof HTMLElement) {
+      // 文章首张正文图常在首屏附近，提前加入首屏 reveal，避免被前面多段文字的队列 delay 拖慢。
+      firstArticleImage.dataset.revealPriority = "article-image";
+      firstArticleImage.dataset.revealPreload = "true";
+    }
+  }
+
   function showTarget(element, revealMode, delayMs = 0) {
     element.classList.remove(revealCompleteClassName);
 
@@ -100,7 +112,12 @@
 
   function showTargetsWithStagger(elements) {
     elements.forEach((element, index) => {
-      showTarget(element, "animated", index * revealStaggerStep);
+      const delayMs =
+        element.dataset.revealPriority === "article-image"
+          ? Math.min(index * revealStaggerStep, revealStaggerStep)
+          : index * revealStaggerStep;
+
+      showTarget(element, "animated", delayMs);
     });
   }
 
@@ -109,6 +126,8 @@
   }
 
   function setupReveal() {
+    markPriorityArticleImage();
+
     const targets = collectRevealTargets();
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 

@@ -30,6 +30,7 @@
     "astro/env.d.ts",
     "astro/**/*.ts",
     "astro.config.mjs",
+    "tina/**/*.ts",
     "scripts/**/*.mjs",
     "tailwind.config.ts"
   ],

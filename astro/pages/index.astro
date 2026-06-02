@@ -88,10 +88,10 @@ const articles = sortArticles(await getCollection("articles"));
         >
           <span class="relative mr-4 size-11 overflow-hidden rounded-full">
             <img
-              src="/cathrine-understrup.png"
+              src="/billy-avatar.png"
               alt=""
-              width="44"
-              height="44"
+              width="40"
+              height="40"
               loading="eager"
               decoding="async"
               class="size-full object-cover"
@@ -113,12 +113,12 @@ const articles = sortArticles(await getCollection("articles"));
               />
             </span>
           </span>
-          <span class="pt-0.5">About Billy</span>
+          <span class="flex h-full items-center leading-none">About Billy</span>
         </a>
       </div>
 
       <div data-global-reveal-group="hero-logos">
-        <div class="overflow-hidden py-12 [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
+        <div class="overflow-hidden py-12">
           <ul class="flex min-h-14 min-w-max items-center">
             {[...logoItems, ...logoItems, ...logoItems].map((item, index) => (
               <li

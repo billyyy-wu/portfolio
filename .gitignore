@@ -11,6 +11,10 @@ dist/
 coverage/
 *.tsbuildinfo
 
+# TinaCMS 后台由 tinacms build 在部署时生成，避免提交本地构建产物。
+public/admin/
+tina/__generated__/
+
 # 本地环境变量可能包含密钥，只保留示例文件进入版本库。
 .env
 .env*.local

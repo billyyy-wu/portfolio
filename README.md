@@ -22,10 +22,28 @@ npm run dev
 http://localhost:4321
 ```
 
+启动带 TinaCMS 后台的本地开发：
+
+```bash
+npm run dev:cms
+```
+
+后台入口：
+
+```text
+http://localhost:4321/admin/index.html
+```
+
 部署前可以本地构建检查：
 
 ```bash
 npm run build
+```
+
+如果本地没有 TinaCloud 环境变量，`npm run build` 会清理并跳过 `/admin` 后台构建，只构建公开站点。需要单独检查公开站点时也可以运行：
+
+```bash
+npm run build:site
 ```
 
 更新内容后如需刷新字体子集：
@@ -46,9 +64,38 @@ astro/
   styles/            全局 Tailwind/CSS
 content/articles/    作品和文章 MDX 内容
 public/images/articles/ 本地作品封面
+tina/config.ts       TinaCMS 后台内容模型和图片上传配置
 ```
 
 默认生产站点由 Astro 构建。新增页面、交互和内容展示逻辑都优先改 `astro/`，文章内容继续由 `content/articles/` 管理。
+
+## TinaCMS 后台编辑
+
+本项目已接入 TinaCMS。后台入口固定为：
+
+```text
+/admin/index.html
+```
+
+后台用于编辑 `content/articles/*.mdx`，支持修改 frontmatter、正文内容和上传图片。上传的图片会进入仓库内：
+
+```text
+public/images/articles/
+```
+
+线上保存逻辑是 TinaCloud 写入 GitHub，随后 Vercel 自动重新部署。普通访客页面不会显示后台入口，也不会加载 Tina 编辑器代码。
+
+未配置 TinaCloud 环境变量时，构建脚本会删除本地开发版 `public/admin/` 和 `dist/admin/`，避免把引用 `localhost` 的后台入口发布出去。
+
+本地或 Vercel 需要配置以下环境变量后，后台才能连接 TinaCloud：
+
+```text
+NEXT_PUBLIC_TINA_CLIENT_ID=你的 TinaCloud Client ID
+TINA_TOKEN=你的 TinaCloud Read Only Token
+NEXT_PUBLIC_TINA_BRANCH=main
+```
+
+`.env.example` 提供了变量名示例，真实 token 不要提交到仓库。
 
 ## 使用 MDX 更新网页内容
 
@@ -188,9 +235,19 @@ Build Command: npm run build
 Output Directory: dist
 ```
 
-6. 点击 `Deploy`。
+6. 在 Vercel 环境变量中添加 TinaCloud 配置：
+
+```text
+NEXT_PUBLIC_TINA_CLIENT_ID
+TINA_TOKEN
+NEXT_PUBLIC_TINA_BRANCH=main
+```
+
+7. 点击 `Deploy`。
 
 完成连接后，每次执行 `git push` 到 `main` 分支，Vercel 会自动触发 Production 部署。
+
+如果没有配置 TinaCloud 环境变量，`npm run build` 仍会成功构建公开站点，但会清理并跳过 `/admin` 后台。
 
 ## 手动触发 Vercel 重新部署
 
@@ -210,8 +267,8 @@ git push
 
 ## 推荐维护流程
 
-1. 修改或新增 `content/articles/*.mdx`。
-2. 本地运行 `npm run dev` 预览。
+1. 修改或新增 `content/articles/*.mdx`，或通过 `/admin/index.html` 后台编辑。
+2. 本地运行 `npm run dev` 预览；需要后台时运行 `npm run dev:cms`。
 3. 需要上线前运行 `npm run build` 和 `npm run lint` 检查。
 4. 执行 `git add .`、`git commit`、`git push` 上传到 GitHub。
 5. 等待 Vercel 自动部署完成。

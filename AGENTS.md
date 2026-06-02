@@ -7,7 +7,10 @@
 ## 常用命令
 
 - `npm run dev`：启动 Astro 开发服务器，默认端口通常为 `4321`。
-- `npm run build`：构建 Astro 静态站点到 `dist/`。
+- `npm run dev:cms`：同时启动 TinaCMS 本地后台和 Astro 开发服务器，后台入口为 `/admin/index.html`。
+- `npm run build`：根据环境变量构建 TinaCMS 后台（如已配置）并构建 Astro 静态站点到 `dist/`。
+- `npm run build:site`：仅构建 Astro 静态站点。
+- `npm run build:cms`：仅构建 TinaCMS 后台，需要 TinaCloud 环境变量。
 - `npm run preview`：预览 Astro 构建产物。
 - `npm run lint`：运行 ESLint。
 - `npm run font:subset`：根据 Astro 源码和 MDX 内容重新生成 OPPO Sans 子集字体。
@@ -22,6 +25,17 @@
 - `astro/lib/articles.ts`：文章排序、文章链接和封面比例映射。
 - `content/articles/`：作品/文章内容源。不要破坏现有 frontmatter 字段。
 - `public/images/articles/`：本地作品封面，优先使用 webp/avif。
+- `tina/config.ts`：TinaCMS 后台内容模型和媒体上传配置。
+- `scripts/build.mjs`：部署构建协调脚本；未配置 TinaCloud 凭据时清理并跳过后台构建，保证主站仍可构建。
+
+## TinaCMS 后台
+
+- 后台入口为 `/admin/index.html`，不在主站导航或页面中暴露隐藏按钮。
+- TinaCloud 写入 GitHub 仓库；线上需要 `NEXT_PUBLIC_TINA_CLIENT_ID`、`TINA_TOKEN`、`NEXT_PUBLIC_TINA_BRANCH=main`。
+- Tina 媒体库使用仓库内媒体，上传图片应进入 `public/images/articles/`，MDX 中使用 `/images/articles/example.webp` 路径。
+- `public/admin/` 和 `tina/__generated__/` 是 Tina 构建产物，不要提交。
+- 未配置 TinaCloud 凭据时，`npm run build` 会删除本地开发版 `public/admin/` 和 `dist/admin/`，避免把 localhost 后台入口发布出去。
+- 普通访客页面不得加载 Tina admin bundle；除非明确要做可视化 iframe 点击编辑，不要把文章页改成 Tina live preview 数据源。
 
 ## 内容规则
 
@@ -62,4 +76,5 @@ npm run lint
 - 首页作品顺序不变。
 - 文章内链路径仍为 `/articles/[slug]`。
 - 客户端 JS 保持轻量，不重新引入 React/Next 客户端包。
+- 公开首页和文章页不应出现 `tinacms`、`data-tina` 或 `/admin/bridge.js` 引用。
 - 页面不引用 `public/fonts/oppo-sans-4.0.woff2` 作为加载字体。

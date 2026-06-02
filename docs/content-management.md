@@ -122,6 +122,36 @@ coverAlt: "我的项目封面图"
 
 如果新增封面的比例和现有卡片不同，需要同步更新 `astro/lib/articles.ts` 中的 `coverAspectBySlug`，这样首页卡片在图片加载前也能保持稳定高度。
 
+## 使用 TinaCMS 后台
+
+项目支持通过 TinaCMS 编辑 MDX 内容。本地启动：
+
+```bash
+npm run dev:cms
+```
+
+后台入口：
+
+```text
+http://localhost:4321/admin/index.html
+```
+
+线上入口为：
+
+```text
+/admin/index.html
+```
+
+后台可编辑 `content/articles/*.mdx`，上传图片会保存到 `public/images/articles/`。线上保存后，TinaCloud 会把 MDX 和图片写入 GitHub，Vercel 随后自动重新部署。
+
+线上后台需要配置：
+
+```text
+NEXT_PUBLIC_TINA_CLIENT_ID
+TINA_TOKEN
+NEXT_PUBLIC_TINA_BRANCH=main
+```
+
 ## 本地预览
 
 修改、新增或删除 MDX 文件后，开发服务器会自动刷新：
