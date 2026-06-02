@@ -24,15 +24,16 @@
 
   const imageSelector = "main img, footer img";
   const groupedRevealSelector =
-    '[data-global-reveal-group="work-card"], [data-global-reveal-group="media-image"]';
+    '[data-global-reveal-group="intro"], [data-global-reveal-group="work-card"], [data-global-reveal-group="media-image"]';
   const visibleClassName = "is-visible";
   const instantClassName = "is-instant";
   const revealCompleteClassName = "is-reveal-complete";
-  const revealCompleteDelay = 680;
+  const revealCompleteDelay = 900;
   const revealRootMargin = "0px 0px -10% 0px";
   const revealThreshold = 0.08;
   const revealFallbackMargin = 160;
-  const routeCoverDurationMs = 740;
+  const revealStaggerStep = 50;
+  const routeCoverDurationMs = 660;
 
   function shouldReveal(element) {
     if (element.closest("[data-no-global-reveal]")) {
@@ -58,7 +59,7 @@
       .filter(shouldReveal)
       .map((element) => ({
         element,
-        type: element.dataset.globalRevealGroup === "media-image" ? "media-image" : "work-card",
+        type: element.dataset.globalRevealGroup ?? "work-card",
       }));
     const textTargets = Array.from(document.querySelectorAll(textSelector))
       .filter(shouldReveal)
@@ -67,22 +68,45 @@
       .filter(shouldReveal)
       .map((element) => ({ element, type: "image" }));
 
-    return [...groupedTargets, ...textTargets, ...imageTargets];
+    return [...groupedTargets, ...textTargets, ...imageTargets].sort((current, next) => {
+      if (current.element === next.element) {
+        return 0;
+      }
+
+      return (
+        current.element.compareDocumentPosition(next.element) &
+        Node.DOCUMENT_POSITION_FOLLOWING
+      )
+        ? -1
+        : 1;
+    });
   }
 
-  function showTarget(element, revealMode) {
+  function showTarget(element, revealMode, delayMs = 0) {
     element.classList.remove(revealCompleteClassName);
 
     if (revealMode === "instant") {
+      element.style.removeProperty("--reveal-delay");
       element.classList.add(instantClassName, revealCompleteClassName);
     } else {
+      element.style.setProperty("--reveal-delay", `${delayMs}ms`);
       element.classList.remove(instantClassName);
       window.setTimeout(() => {
         element.classList.add(revealCompleteClassName);
-      }, revealCompleteDelay);
+      }, delayMs + revealCompleteDelay);
     }
 
     element.classList.add(visibleClassName);
+  }
+
+  function showTargetsWithStagger(elements) {
+    elements.forEach((element, index) => {
+      showTarget(element, "animated", index * revealStaggerStep);
+    });
+  }
+
+  function releaseRevealPending() {
+    document.documentElement.removeAttribute("data-reveal-pending");
   }
 
   function setupReveal() {
@@ -94,14 +118,19 @@
         element.dataset.globalReveal = type;
         showTarget(element, "instant");
       });
+      releaseRevealPending();
       return;
     }
+
+    const initialViewportTargets = [];
 
     targets.forEach(({ element, type }) => {
       element.dataset.globalReveal = type;
 
-      if (isInViewport(element)) {
-        showTarget(element, "instant");
+      if (isInViewport(element) || element.dataset.revealPreload === "true") {
+        // 页面进入时首屏内容也播放全局出场动效；导航不在 main/footer 选择器内，不参与 reveal。
+        element.classList.remove(visibleClassName, instantClassName, revealCompleteClassName);
+        initialViewportTargets.push(element);
         return;
       }
 
@@ -110,14 +139,12 @@
 
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) {
-            return;
-          }
+        const intersectingTargets = entries
+          .filter((entry) => entry.isIntersecting)
+          .map((entry) => entry.target);
 
-          const target = entry.target;
-          // IntersectionObserver 已经能判断进入视口，避免额外挂 scroll 监听来判断方向。
-          showTarget(target, "animated");
+        showTargetsWithStagger(intersectingTargets);
+        intersectingTargets.forEach((target) => {
           observer.unobserve(target);
         });
       },
@@ -133,12 +160,21 @@
       }
     });
 
+    releaseRevealPending();
+
     window.requestAnimationFrame(() => {
-      targets.forEach(({ element }) => {
-        if (!element.classList.contains(visibleClassName) && isNearViewport(element)) {
-          showTarget(element, "animated");
-          observer.unobserve(element);
-        }
+      showTargetsWithStagger(initialViewportTargets);
+      initialViewportTargets.forEach((element) => {
+        observer.unobserve(element);
+      });
+
+      const fallbackTargets = targets
+        .map(({ element }) => element)
+        .filter((element) => !element.classList.contains(visibleClassName) && isNearViewport(element));
+
+      showTargetsWithStagger(fallbackTargets);
+      fallbackTargets.forEach((element) => {
+        observer.unobserve(element);
       });
     });
   }

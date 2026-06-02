@@ -24,10 +24,13 @@
   --reveal-opacity-duration: 520ms;
   --reveal-transform-duration: 620ms;
   --reveal-offset-y: 24px;
-  --reveal-media-mask-duration: var(--reveal-transform-duration);
+  --reveal-intro-offset-y: 40px;
+  --reveal-intro-opacity-duration: 640ms;
+  --reveal-intro-transform-duration: 780ms;
+  --reveal-media-mask-duration: 820ms;
   --reveal-opacity-ease: ease-out;
   --reveal-transform-ease: var(--reveal-standard-ease);
-  --reveal-media-mask-ease: var(--reveal-standard-ease);
+  --reveal-media-mask-ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html {
@@ -44,6 +47,12 @@ body {
 ::selection {
   background: #ff6e99;
   color: #ffffff;
+}
+
+html[data-reveal-pending] main,
+html[data-reveal-pending] footer {
+  /* 多页跳转时先等脚本设置 reveal 初始态，避免新页面裸露一帧后再被隐藏。 */
+  opacity: 0;
 }
 
 [data-global-reveal] {
@@ -83,6 +92,20 @@ body {
   transition:
     opacity var(--reveal-opacity-duration) var(--reveal-opacity-ease),
     transform var(--reveal-transform-duration) var(--reveal-transform-ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-global-reveal="intro"]:not(.is-visible) {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-intro-offset-y), 0);
+}
+
+[data-global-reveal="intro"].is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition:
+    opacity var(--reveal-intro-opacity-duration) var(--reveal-opacity-ease),
+    transform var(--reveal-intro-transform-duration) var(--reveal-transform-ease);
   transition-delay: var(--reveal-delay, 0ms);
 }
 
@@ -199,8 +222,8 @@ body {
       transform: scaleX(0.08);
     }
 
-    28% {
-      opacity: 0.4;
+    50% {
+      opacity: 0.3;
     }
 
     100% {
@@ -309,6 +332,42 @@ body {
 
   .site-gradient-top {
     background: linear-gradient(180deg, #fbeeee 0%, #fbeeee 82%, #ffffff 100%);
+  }
+
+  @keyframes hero-background-fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  .hero-background-fade {
+    position: relative;
+    overflow: hidden;
+    background: #ffffff;
+  }
+
+  .hero-background-fade::before {
+    /* 首屏背景层独立淡入，避免多页跳转释放 main 时出现一帧闪烁。 */
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(180deg, #fbeeee 0%, #fbeeee 82%, #ffffff 100%);
+    opacity: 0;
+  }
+
+  .hero-background-fade > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  html:not([data-reveal-pending]) .hero-background-fade::before {
+    animation: hero-background-fade-in 520ms ease-out both;
   }
 
   .site-gradient-bottom {

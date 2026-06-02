@@ -59,9 +59,9 @@ function getTextMeasure(text: string) {
   }, 0);
 }
 
-function estimateLineCount(text: string, contentWidth: number, fontSize: number, minimumLines = 1) {
+function estimateLineCount(text: string, contentWidth: number, fontSize: number) {
   const lineCapacity = contentWidth / fontSize;
-  return Math.max(minimumLines, Math.ceil(getTextMeasure(text) / lineCapacity));
+  return Math.max(1, Math.ceil(getTextMeasure(text) / lineCapacity));
 }
 
 export function getArticleGridSpan(article: ArticleEntry, breakpoint: "sm" | "lg" = "lg") {
@@ -71,7 +71,7 @@ export function getArticleGridSpan(article: ArticleEntry, breakpoint: "sm" | "lg
   const imageHeight = referenceContentWidth * getCoverRatio(article.id);
   const titleHeight = estimateLineCount(article.data.title, referenceContentWidth, 24) * 29;
   const descriptionHeight =
-    estimateLineCount(article.data.description, referenceContentWidth, 18, 2) * 32.4;
+    estimateLineCount(article.data.description, referenceContentWidth, 18) * 32.4;
   const spacingHeight = 16 + 4 + targetCardGap;
 
   return Math.ceil((imageHeight + titleHeight + descriptionHeight + spacingHeight) / gridRowSize);

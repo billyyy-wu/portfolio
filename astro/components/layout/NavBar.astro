@@ -2,7 +2,8 @@
 const navItems = [
   { href: "/", label: "Work" },
   { href: "/#connect", label: "About", activeHref: "#connect" },
-  { href: "/#resume", label: "Resume", activeHref: "#resume" },
+  // Resume PDF 放在 public/resume.pdf，普通链接会交给浏览器默认 PDF 查看器打开。
+  { href: "/resume.pdf", label: "Resume", target: "_blank", rel: "noopener" },
 ];
 
 const letterClass =
@@ -48,6 +49,8 @@ const letterClass =
                 data-active-href={item.activeHref ?? item.href}
                 class="relative inline-block pb-1 transition hover:text-ink after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-full after:-translate-x-1/2 after:scale-x-0 after:bg-ink after:transition-transform after:duration-150 after:ease-out after:content-[''] hover:after:scale-x-100"
                 href={item.href}
+                target={item.target}
+                rel={item.rel}
               >
                 {item.label}
               </a>
@@ -85,6 +88,8 @@ const letterClass =
               data-active-href={item.activeHref ?? item.href}
               class="relative inline-block px-3 pb-1 after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-[calc(100%-1.5rem)] after:-translate-x-1/2 after:scale-x-0 after:bg-ink after:transition-transform after:duration-150 after:ease-out after:content-[''] hover:after:scale-x-100"
               href={item.href}
+              target={item.target}
+              rel={item.rel}
             >
               {item.label}
             </a>

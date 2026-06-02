@@ -18,14 +18,14 @@ const {
 } = Astro.props;
 const pageTitle = title === "Cathrine Understrup | Portfolio" ? title : `${title} | Portfolio`;
 const panelDurations = [0.05, 0.12, 0.12, 0.12, 0.05];
-const panelGap = 0.05;
+const panelGap = 0.03;
 const panelDelays = panelDurations.map((_, index) =>
   panelDurations.slice(0, index).reduce((total, duration) => total + duration + panelGap, 0),
 );
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-reveal-pending>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -35,6 +35,7 @@ const panelDelays = panelDurations.map((_, index) =>
     <meta property="og:description" content={description} />
     {image ? <meta property="og:image" content={image} /> : null}
     <link rel="preload" href="/fonts/gotham-medium.woff2" as="font" type="font/woff2" crossorigin />
+    <noscript><style>html[data-reveal-pending] main,html[data-reveal-pending] footer{opacity:1}</style></noscript>
   </head>
   <body class="flex min-h-screen flex-col font-sans antialiased">
     <NavBar />

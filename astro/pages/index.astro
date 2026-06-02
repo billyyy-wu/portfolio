@@ -53,8 +53,11 @@ const articles = sortArticles(await getCollection("articles"));
 ---
 
 <BaseLayout>
-  <section class="site-gradient-top pb-16 pt-12 md:min-h-[844px] md:pb-24 md:pt-32">
-    <div class="mx-auto flex w-full max-w-site flex-col gap-16 px-4">
+  <section class="hero-background-fade site-gradient-top pb-16 pt-12 md:min-h-[844px] md:pb-24 md:pt-32">
+    <div
+      data-global-reveal-group="intro"
+      class="mx-auto flex w-full max-w-site flex-col gap-16 px-4"
+    >
       <div class="flex w-full flex-col gap-8">
         <div>
           <h1 class="text-4xl font-bold leading-[1.3] tracking-[-1.44px] text-ink sm:text-[40px] md:text-[60px] md:leading-[78px] md:tracking-[-2.4px]">
@@ -172,6 +175,7 @@ const articles = sortArticles(await getCollection("articles"));
           <PostCard
             article={article}
             priority={index < 3}
+            revealPreload={index < 3}
             index={index}
             gridSpanSm={getArticleGridSpan(article, "sm")}
             gridSpanLg={getArticleGridSpan(article, "lg")}

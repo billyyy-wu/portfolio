@@ -4,12 +4,20 @@ import { coverAspectBySlug, getArticleHref, type ArticleEntry } from "~/lib/arti
 interface Props {
   article: ArticleEntry;
   priority?: boolean;
+  revealPreload?: boolean;
   index?: number;
   gridSpanSm?: number;
   gridSpanLg?: number;
 }
 
-const { article, priority = false, index = 0, gridSpanSm, gridSpanLg } = Astro.props;
+const {
+  article,
+  priority = false,
+  revealPreload = false,
+  index = 0,
+  gridSpanSm,
+  gridSpanLg,
+} = Astro.props;
 const href = getArticleHref(article);
 const isExternal = Boolean(article.data.externalUrl);
 const coverAspect = coverAspectBySlug[article.id] ?? "aspect-[352.66/326.2]";
@@ -24,6 +32,7 @@ const style = [
 
 <article
   data-global-reveal-group="work-card"
+  data-reveal-preload={revealPreload ? "true" : undefined}
   data-article-slug={article.id}
   style={style}
   class="relative z-0 mb-12 break-inside-avoid px-3 sm:mb-0 md:hover:z-30 md:px-5"
@@ -53,7 +62,7 @@ const style = [
     <h3 class="mb-1 text-[24px] font-bold leading-[1.2] tracking-[-0.6px] text-ink">
       {article.data.title}
     </h3>
-    <p class="text-[18px] font-medium leading-[1.8] tracking-[-0.45px] text-neutral-600 sm:min-h-[64.8px]">
+    <p class="text-[18px] font-medium leading-[1.8] tracking-[-0.45px] text-neutral-600">
       {article.data.description}
     </p>
   </a>

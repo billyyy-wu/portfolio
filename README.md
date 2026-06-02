@@ -120,6 +120,28 @@ coverAlt: "我的项目封面图"
 
 如果新增封面的比例和现有卡片不同，需要在 `astro/lib/articles.ts` 的 `coverAspectBySlug` 中补充对应 slug 的比例，避免首页瀑布流布局跳动。
 
+## 上传 Resume PDF
+
+简历 PDF 放在：
+
+```text
+public/resume.pdf
+```
+
+Astro/Vercel 部署后，这个文件会以站点根路径公开访问：
+
+```text
+/resume.pdf
+```
+
+如果生产域名是 `https://example.com`，完整访问地址就是：
+
+```text
+https://example.com/resume.pdf
+```
+
+更新简历时，直接替换 `public/resume.pdf`，然后提交并推送到 GitHub。Vercel 完成部署后，新 PDF 会随站点一起更新。
+
 ## 上传更新到 GitHub
 
 每次修改 MDX 内容、图片或代码后，先查看变更：
@@ -163,6 +185,7 @@ git push
 ```text
 Install Command: npm install
 Build Command: npm run build
+Output Directory: dist
 ```
 
 6. 点击 `Deploy`。
@@ -189,6 +212,6 @@ git push
 
 1. 修改或新增 `content/articles/*.mdx`。
 2. 本地运行 `npm run dev` 预览。
-3. 需要上线前运行 `npm run build` 检查。
+3. 需要上线前运行 `npm run build` 和 `npm run lint` 检查。
 4. 执行 `git add .`、`git commit`、`git push` 上传到 GitHub。
 5. 等待 Vercel 自动部署完成。
