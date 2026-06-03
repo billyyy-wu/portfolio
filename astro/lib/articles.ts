@@ -3,6 +3,7 @@ import type { CollectionEntry } from "astro:content";
 export type ArticleEntry = CollectionEntry<"articles">;
 
 export const coverAspectBySlug: Record<string, string> = {
+  "chinese-font-history": "aspect-[1260/420]",
   "design-trends-and-ai-collaboration": "aspect-[1200/860]",
   "ai-design-workflow-tips": "aspect-[1200/860]",
   "prompt-library-for-designers": "aspect-[1200/860]",

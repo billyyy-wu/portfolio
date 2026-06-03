@@ -1,7 +1,8 @@
 ---
 const navItems = [
   { href: "/", label: "Work" },
-  { href: "/#connect", label: "About", activeHref: "#connect" },
+  // About 设计稿已落成独立路由，导航保持直接页面跳转。
+  { href: "/about", label: "About" },
   // Resume PDF 放在 public/resume.pdf，普通链接会交给浏览器默认 PDF 查看器打开。
   { href: "/resume.pdf", label: "Resume", target: "_blank", rel: "noopener" },
 ];

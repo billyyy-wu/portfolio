@@ -25,22 +25,59 @@ const formattedDate = new Intl.DateTimeFormat("en", {
   description={article.data.description}
   image={article.data.cover}
 >
-  <article class="mx-auto w-full max-w-3xl px-4 py-16 md:py-24">
-    <div>
-      <p class="mb-4 text-sm font-black uppercase text-accent">
-        {formattedDate}
-      </p>
-      <h1 class="text-4xl font-black leading-tight text-ink md:text-6xl">
-        {article.data.title}
-      </h1>
-      <p class="mt-6 text-xl leading-9 text-neutral-600">
+  <article class="article-design mx-auto w-full px-4">
+    <header class="article-design__header mx-auto w-full max-w-[1260px] text-center">
+      <div class="mx-auto w-full max-w-[800px]">
+        <h1 class="article-design__title text-ink">
+          {article.data.title}
+        </h1>
+        <div class="article-design__divider mx-auto" aria-hidden="true"></div>
+        <p class="article-design__category uppercase">Design</p>
+      </div>
+
+      <p class="article-design__description mx-auto max-w-[800px] text-neutral-600">
         {article.data.description}
       </p>
+
+      {article.data.cover ? (
+        <figure class="article-design__cover">
+          <img
+            src={article.data.cover}
+            alt={article.data.coverAlt ?? article.data.title}
+            width="1260"
+            height="420"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+            class="block h-auto w-full"
+          />
+        </figure>
+      ) : null}
+    </header>
+
+    <div class="article-design__content mx-auto w-full max-w-[800px]">
+      <div class="article-body">
+        <Content components={{ a: MdxAnchor, img: MdxImage }} />
+      </div>
     </div>
 
-    <div>
-      <div class="prose prose-neutral mt-12 max-w-none prose-headings:text-ink prose-headings:font-black prose-p:leading-8 prose-a:text-accent">
-        <Content components={{ a: MdxAnchor, img: MdxImage }} />
+    <footer class="article-design__meta mx-auto w-full max-w-[944px]">
+      <p>{formattedDate}</p>
+    </footer>
+
+    <div class="article-design__contributors mx-auto w-full max-w-[984px] text-center">
+      <p class="article-design__contributors-label uppercase">Contributors</p>
+      <div class="article-design__contributor-card">
+        <img
+          src="/billy-avatar.png"
+          alt=""
+          width="90"
+          height="90"
+          loading="lazy"
+          decoding="async"
+          class="mx-auto size-[90px] rounded-full object-cover"
+        />
+        <p>johnsonjin</p>
       </div>
     </div>
   </article>

@@ -11,9 +11,9 @@ const loading = attrs.loading ?? (imageSize ? "eager" : "lazy");
 const fetchPriority = attrs.fetchpriority ?? (imageSize ? "high" : undefined);
 ---
 
-<figure
+<span
   data-global-reveal-group="media-image"
-  class="my-10 overflow-hidden rounded-lg bg-white"
+  class="article-body__figure overflow-hidden bg-white"
 >
   <img
     {...attrs}
@@ -24,6 +24,6 @@ const fetchPriority = attrs.fetchpriority ?? (imageSize ? "high" : undefined);
     loading={loading}
     fetchpriority={fetchPriority}
     decoding="async"
-    class:list={["block w-full object-cover", className]}
+    class:list={["block h-auto w-full object-contain", className]}
   />
-</figure>
+</span>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="420" viewBox="0 0 1260 420" role="img" aria-label="Chinese Font History">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="hsl(350 58% 94%)"/>
+      <stop offset="1" stop-color="hsl(374 45% 88%)"/>
+    </linearGradient>
+  </defs>
+  <rect width="1260" height="420" fill="url(#bg)"/>
+  <rect x="101" y="50" width="1058" height="319" rx="0" fill="none" stroke="rgba(82,82,82,.22)" stroke-width="2"/>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#525252" font-family="Arial, sans-serif" font-size="42" font-weight="700" letter-spacing="0">Chinese Font History</text>
+</svg>

@@ -163,6 +163,195 @@ html[data-reveal-pending] footer {
   align-self: start;
 }
 
+.article-design {
+  padding-bottom: 120px;
+  padding-top: 96px;
+}
+
+.article-design__title {
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.28;
+}
+
+.article-design__divider {
+  margin-top: 20px;
+  height: 1px;
+  width: 148px;
+  background: #d9d9d9;
+}
+
+.article-design__category {
+  margin-top: 20px;
+  color: #525252;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 14px;
+}
+
+.article-design__description {
+  margin-top: 60px;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 32px;
+}
+
+.article-design__cover {
+  margin: 60px 0 0;
+}
+
+.article-design__content {
+  margin-top: 60px;
+}
+
+.article-design__meta {
+  margin-top: 80px;
+  padding-top: 80px;
+}
+
+.article-design__meta p {
+  color: #525252;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 28px;
+}
+
+.article-design__contributors {
+  margin-top: 40px;
+  padding: 40px 0;
+}
+
+.article-design__contributors-label {
+  color: #525252;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 17px;
+}
+
+.article-design__contributor-card {
+  margin: 30px auto 0;
+  width: 92px;
+}
+
+.article-design__contributor-card p {
+  margin-top: 11px;
+  color: #525252;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 17px;
+}
+
+.article-body {
+  color: #525252;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 32px;
+}
+
+.article-body > *:first-child {
+  margin-top: 0;
+}
+
+.article-body h2,
+.article-body h3,
+.article-body h4 {
+  color: #525252;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.article-body h2 {
+  margin: 0 0 20px;
+  font-size: 24px;
+  line-height: 34px;
+}
+
+.article-body h3 {
+  margin: 52px 0 20px;
+  font-size: 24px;
+  line-height: 32px;
+}
+
+.article-body h4 {
+  /* 小节眉题按 Figma 的窄行高处理，用于拉开章节间的呼吸感。 */
+  margin: 92px 0 20px;
+  font-size: 14px;
+  line-height: 14px;
+}
+
+.article-body p,
+.article-body ol,
+.article-body ul {
+  margin: 0 0 20px;
+}
+
+.article-body a {
+  color: #ff6e99;
+  text-decoration: none;
+}
+
+.article-body a:hover {
+  text-decoration: underline;
+}
+
+.article-body ol,
+.article-body ul {
+  padding-left: 1.2em;
+}
+
+.article-body li + li {
+  margin-top: 20px;
+}
+
+.article-body__figure {
+  /* 图片仅按自身比例自适应宽度，不在页面层强行裁切高度。 */
+  display: block;
+  margin: 20px 0;
+}
+
+.article-body p:has(> .article-body__figure:only-child) {
+  /* Markdown 图片会被包进段落；清掉段落外边距，避免图片间距重复叠加。 */
+  margin: 0;
+}
+
+.article-body > img {
+  /* 兼容 MDX 中直接书写的 img 元素，保持与图片组件一致的自然比例。 */
+  display: block;
+  height: auto;
+  margin: 20px 0;
+  width: 100%;
+}
+
+.article-body__figure + h3 {
+  margin-top: 40px;
+}
+
+.article-body__figure + h4 {
+  margin-top: 112px;
+}
+
+.article-body > img + h3 {
+  margin-top: 40px;
+}
+
+.article-body p:has(> .article-body__figure:only-child) + h3 {
+  margin-top: 40px;
+}
+
+.article-body > img + h4 {
+  margin-top: 112px;
+}
+
+.article-body p:has(> .article-body__figure:only-child) + h4 {
+  margin-top: 112px;
+}
+
 @media (min-width: 640px) {
   [data-selected-work-grid] {
     grid-auto-rows: 4px;
@@ -188,6 +377,50 @@ html[data-reveal-pending] footer {
 @media (min-width: 1280px) {
   [data-selected-work-grid] > [data-global-reveal-group="work-card"] {
     grid-row-end: span var(--work-card-row-span-xl);
+  }
+}
+
+@media (min-width: 768px) {
+  .article-design {
+    padding-top: 120px;
+  }
+
+  .article-design__title {
+    font-size: 40px;
+    line-height: 51px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .article-design {
+    padding-bottom: 80px;
+    padding-top: 64px;
+  }
+
+  .article-design__description {
+    margin-top: 40px;
+    font-size: 20px;
+    line-height: 30px;
+  }
+
+  .article-design__cover,
+  .article-design__content {
+    margin-top: 40px;
+  }
+
+  .article-body {
+    font-size: 17px;
+    line-height: 30px;
+  }
+
+  .article-body h3 {
+    margin-top: 40px;
+  }
+
+  .article-body h4,
+  .article-body__figure + h4,
+  .article-body p:has(> .article-body__figure:only-child) + h4 {
+    margin-top: 64px;
   }
 }
 
