@@ -4,8 +4,10 @@
 
 @font-face {
   font-family: "Oppo Sans Subset";
-  src: url("/fonts/oppo-sans-subset.ttf") format("truetype");
+  src: url("/fonts/oppo-sans-subset.woff2") format("woff2");
   font-display: swap;
+  unicode-range:
+    U+2014, U+00B7, U+2E80-9FFF, U+F900-FAFF, U+FF01-FF5E, U+FFE5;
 }
 
 @font-face {

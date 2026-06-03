@@ -42,6 +42,20 @@ function getCoverRatio(slug: string) {
   return Number(match[2]) / Number(match[1]);
 }
 
+export function getArticleCoverDimensions(article: ArticleEntry) {
+  const aspectClass = coverAspectBySlug[article.id] ?? "aspect-[1260/420]";
+  const match = aspectClass.match(/aspect-\[([\d.]+)\/([\d.]+)\]/);
+
+  if (!match) {
+    return { width: 1260, height: 420 };
+  }
+
+  return {
+    width: Math.round(Number(match[1])),
+    height: Math.round(Number(match[2])),
+  };
+}
+
 function getTextMeasure(text: string) {
   return Array.from(text).reduce((width, character) => {
     if (/[\u2E80-\u9FFF\uF900-\uFAFF]/.test(character)) {

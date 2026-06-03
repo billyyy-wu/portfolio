@@ -142,7 +142,7 @@ http://localhost:4321/admin/index.html
 /admin/index.html
 ```
 
-后台可编辑 `content/articles/*.mdx`，上传图片会保存到 `public/images/articles/`。线上保存后，TinaCloud 会把 MDX 和图片写入 GitHub，Vercel 随后自动重新部署。
+后台可编辑 `content/articles/*.mdx` 和 `content/pages/about.mdx`。文章图片会保存到 `public/images/articles/`，about 图片会保存到 `public/images/about/`。线上保存后，TinaCloud 会把 MDX 和图片写入 GitHub，Vercel 随后自动重新部署。
 
 线上后台需要配置：
 

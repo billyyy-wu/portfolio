@@ -24,15 +24,19 @@
 - `astro/content.config.ts`：Astro Content Collections 配置，读取 `content/articles/*.mdx`。
 - `astro/lib/articles.ts`：文章排序、文章链接和封面比例映射。
 - `content/articles/`：作品/文章内容源。不要破坏现有 frontmatter 字段。
+- `content/pages/`：静态页面内容源，目前包含 about 页面 frontmatter。
 - `public/images/articles/`：本地作品封面，优先使用 webp/avif。
+- `public/images/about/`：about 页面本地图片，优先使用 webp/avif。
 - `tina/config.ts`：TinaCMS 后台内容模型和媒体上传配置。
 - `scripts/build.mjs`：部署构建协调脚本；未配置 TinaCloud 凭据时清理并跳过后台构建，保证主站仍可构建。
 
 ## TinaCMS 后台
 
 - 后台入口为 `/admin/index.html`，不在主站导航或页面中暴露隐藏按钮。
+- `npm run dev:cms` 会通过 `TINA_ENABLED=true` 启用 Tina Astro integration；普通 `dev/build` 不启用，避免公开站点生成未使用的 Tina bridge 产物。
 - TinaCloud 写入 GitHub 仓库；线上需要 `NEXT_PUBLIC_TINA_CLIENT_ID`、`TINA_TOKEN`、`NEXT_PUBLIC_TINA_BRANCH=main`。
-- Tina 媒体库使用仓库内媒体，上传图片应进入 `public/images/articles/`，MDX 中使用 `/images/articles/example.webp` 路径。
+- Tina 媒体库使用仓库内媒体；文章图片进入 `public/images/articles/`，about 图片进入 `public/images/about/`，MDX 中使用 `/images/.../example.webp` 路径。
+- Tina 后台可编辑 `content/articles/*.mdx` 和 `content/pages/about.mdx`；不要把普通访客页面改成依赖 Tina live preview 数据。
 - `public/admin/` 和 `tina/__generated__/` 是 Tina 构建产物，不要提交。
 - 未配置 TinaCloud 凭据时，`npm run build` 会删除本地开发版 `public/admin/` 和 `dist/admin/`，避免把 localhost 后台入口发布出去。
 - 普通访客页面不得加载 Tina admin bundle；除非明确要做可视化 iframe 点击编辑，不要把文章页改成 Tina live preview 数据源。

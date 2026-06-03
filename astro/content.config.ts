@@ -35,7 +35,7 @@ const pages = defineCollection({
     }),
     intro: z.object({
       label: z.string(),
-      paragraphs: z.array(z.string()),
+      paragraphs: z.array(z.string()).length(4),
       highlight: z.string(),
     }),
     experience: z.object({
@@ -73,7 +73,7 @@ const pages = defineCollection({
         }),
       ),
     }),
-    galleryImages: z.array(z.string()),
+    galleryImages: z.array(z.string()).min(1),
   }),
 });
 

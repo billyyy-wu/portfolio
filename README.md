@@ -34,6 +34,8 @@ npm run dev:cms
 http://localhost:4321/admin/index.html
 ```
 
+`dev:cms` 会显式启用 Tina Astro integration；普通 `dev` 和公开站点构建不启用这层桥接代码，避免访客页面携带未使用的后台脚本。
+
 部署前可以本地构建检查：
 
 ```bash
@@ -63,11 +65,13 @@ astro/
   pages/             Astro 路由页面
   styles/            全局 Tailwind/CSS
 content/articles/    作品和文章 MDX 内容
+content/pages/       about 等静态页面 MDX frontmatter
 public/images/articles/ 本地作品封面
+public/images/about/ about 页面本地图片
 tina/config.ts       TinaCMS 后台内容模型和图片上传配置
 ```
 
-默认生产站点由 Astro 构建。新增页面、交互和内容展示逻辑都优先改 `astro/`，文章内容继续由 `content/articles/` 管理。
+默认生产站点由 Astro 构建。新增页面、交互和内容展示逻辑都优先改 `astro/`，文章内容继续由 `content/articles/` 管理，about 页面内容由 `content/pages/about.mdx` 管理。
 
 ## TinaCMS 后台编辑
 
@@ -77,10 +81,11 @@ tina/config.ts       TinaCMS 后台内容模型和图片上传配置
 /admin/index.html
 ```
 
-后台用于编辑 `content/articles/*.mdx`，支持修改 frontmatter、正文内容和上传图片。上传的图片会进入仓库内：
+后台用于编辑 `content/articles/*.mdx` 和 `content/pages/about.mdx`，支持修改 frontmatter、正文内容和上传图片。上传的图片会进入仓库内对应目录：
 
 ```text
 public/images/articles/
+public/images/about/
 ```
 
 线上保存逻辑是 TinaCloud 写入 GitHub，随后 Vercel 自动重新部署。普通访客页面不会显示后台入口，也不会加载 Tina 编辑器代码。

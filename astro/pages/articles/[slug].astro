@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import MdxAnchor from "~/components/mdx/MdxAnchor.astro";
 import MdxImage from "~/components/mdx/MdxImage.astro";
+import { getArticleCoverDimensions } from "~/lib/articles";
 
 export async function getStaticPaths() {
   const articles = await getCollection("articles");
@@ -15,6 +16,7 @@ export async function getStaticPaths() {
 
 const { article } = Astro.props;
 const { Content } = await render(article);
+const coverDimensions = getArticleCoverDimensions(article);
 const formattedDate = new Intl.DateTimeFormat("en", {
   dateStyle: "medium",
 }).format(new Date(article.data.date));
@@ -44,8 +46,8 @@ const formattedDate = new Intl.DateTimeFormat("en", {
           <img
             src={article.data.cover}
             alt={article.data.coverAlt ?? article.data.title}
-            width="1260"
-            height="420"
+            width={coverDimensions.width}
+            height={coverDimensions.height}
             loading="eager"
             fetchpriority="high"
             decoding="async"

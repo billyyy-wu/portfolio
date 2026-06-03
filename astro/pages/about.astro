@@ -25,6 +25,7 @@ const {
   education,
   galleryImages,
 } = aboutEntry.data;
+const [introOpening, introBeforeHighlight, introAfterHighlight, introClosing] = intro.paragraphs;
 ---
 
 <BaseLayout
@@ -33,11 +34,11 @@ const {
 >
   <article class={`bg-white font-sans ${textColor}`}>
     <section class="mx-auto h-auto w-full max-w-[1200px] px-4 pt-16 md:h-[582px] md:px-0">
-      <div class="relative min-h-[650px] md:h-[486px] md:min-h-0">
+      <div class="grid gap-4 md:relative md:block md:h-[486px]">
         <div
           data-global-reveal-group="image"
           data-reveal-preload="true"
-          class="absolute right-0 top-0 h-[206px] w-[206px] overflow-hidden rounded-lg md:left-[971px] md:top-[304px]"
+          class="order-2 h-[176px] w-[176px] justify-self-end overflow-hidden rounded-lg md:absolute md:left-[971px] md:top-[304px] md:h-[206px] md:w-[206px]"
         >
           <img
             src={heroImages.small}
@@ -53,7 +54,7 @@ const {
         <div
           data-global-reveal-group="image"
           data-reveal-preload="true"
-          class="absolute right-[120px] top-12 h-[280px] w-[280px] overflow-hidden rounded-lg md:left-[527px] md:top-[26px] md:size-[412px]"
+          class="order-1 h-[280px] w-[280px] justify-self-end overflow-hidden rounded-lg md:absolute md:left-[527px] md:top-[26px] md:size-[412px]"
         >
           <img
             src={heroImages.main}
@@ -69,12 +70,12 @@ const {
         <div
           data-global-reveal-group="hero-title"
           data-reveal-preload="true"
-          class="absolute left-0 top-[350px] md:top-[127px]"
+          class="order-3 mt-4 md:absolute md:left-0 md:top-[127px] md:mt-0"
         >
-          <h1 class={`${headingColor} text-[64px] font-normal leading-[76.8px] tracking-[-2.4px] md:text-[96px] md:leading-[115.2px] md:tracking-[-3.6px]`}>
+          <h1 class={`${headingColor} text-[56px] font-normal leading-[67.2px] tracking-normal sm:text-[64px] sm:leading-[76.8px] md:text-[96px] md:leading-[115.2px]`}>
             {name}<br />{localizedName}
           </h1>
-          <p class={`${headingColor} ml-[220px] mt-[-39px] text-[18px] font-normal leading-[28.8px] tracking-[-0.15px] md:ml-[304px] md:text-[24px] md:leading-[38.4px] md:tracking-[-0.2px]`}>
+          <p class={`${headingColor} ml-[160px] mt-[-32px] text-[18px] font-normal leading-[28.8px] tracking-normal sm:ml-[220px] sm:mt-[-39px] md:ml-[304px] md:text-[24px] md:leading-[38.4px]`}>
             {pronunciation}
           </p>
         </div>
@@ -85,12 +86,12 @@ const {
       <section class="grid gap-8 md:grid-cols-[96px_768px] md:justify-center md:gap-10">
         <h2 class="text-[18px] font-normal leading-[28.8px]">{intro.label}</h2>
         <div class="max-w-[768px] space-y-[16px] text-[18px] font-normal leading-[28.8px]">
-          <p>{intro.paragraphs[0]}</p>
+          <p>{introOpening}</p>
           <p>
-            {intro.paragraphs[1]} <strong class="font-bold">{intro.highlight}</strong>{" "}
-            {intro.paragraphs[2]}
+            {introBeforeHighlight} <strong class="font-bold">{intro.highlight}</strong>{" "}
+            {introAfterHighlight}
           </p>
-          <p>{intro.paragraphs[3]}</p>
+          <p>{introClosing}</p>
         </div>
       </section>
 
@@ -154,14 +155,14 @@ const {
       </section>
 
       <section class="mt-[80px] grid grid-cols-2 gap-[28px] md:grid-cols-4 md:gap-[60px]">
-        {galleryImages.map((src, index) => (
+        {galleryImages.map((src) => (
           <div class="aspect-square overflow-hidden rounded-lg">
             <img
               src={src}
               alt=""
               width="227"
               height="227"
-              loading={index < 4 ? "eager" : "lazy"}
+              loading="lazy"
               decoding="async"
               class="size-full object-cover"
             />

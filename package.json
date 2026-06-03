@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "dev:cms": "tinacms dev -c \"astro dev\"",
+    "dev:cms": "TINA_ENABLED=true tinacms dev -c \"astro dev\"",
     "build": "node scripts/build.mjs",
     "build:site": "astro build",
     "build:cms": "tinacms build",
@@ -33,7 +33,6 @@
     "@types/node": "^25.9.1",
     "autoprefixer": "^10.5.0",
     "eslint": "^9.39.4",
-    "fontkit": "^2.0.4",
     "postcss": "^8.5.15",
     "tailwindcss": "^3.4.19",
     "typescript": "^5.9.3",

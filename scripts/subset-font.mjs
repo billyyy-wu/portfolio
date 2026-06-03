@@ -1,16 +1,17 @@
 #!/usr/bin/env node
 
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { create as createFont } from "fontkit";
 
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(currentDirectory, "..");
 
 // 源字体仅用于生成子集，放在非 public 目录，避免把 13MB 原始字体部署到线上。
 const sourceFont = path.join(root, "assets", "fonts", "source", "oppo-sans-4.0.woff2");
-const outputFont = path.join(root, "public", "fonts", "oppo-sans-subset.ttf");
+const outputFont = path.join(root, "public", "fonts", "oppo-sans-subset.woff2");
 const scanDirectories = ["astro", "content"].map((directory) => path.join(root, directory));
 const scanExtensions = new Set([".astro", ".css", ".js", ".mdx", ".mjs", ".ts"]);
 
@@ -18,10 +19,15 @@ const scanExtensions = new Set([".astro", ".css", ".js", ".mdx", ".mjs", ".ts"])
 const safeText = `
 ，。！？、；：“”‘’（）《》—·￥
 `;
-const skippedCharacters = new Set(["\u00ad", "…"]);
+const skippedCharacters = new Set(["\u00ad", "…", "・"]);
+const safeCharacters = new Set(Array.from(safeText).filter((character) => character.trim()));
 
 function shouldKeepCharacter(character) {
-  return character.codePointAt(0) > 0x7f && !skippedCharacters.has(character);
+  const codePoint = character.codePointAt(0);
+  const isCjkCharacter =
+    (codePoint >= 0x2e80 && codePoint <= 0x9fff) || (codePoint >= 0xf900 && codePoint <= 0xfaff);
+
+  return !skippedCharacters.has(character) && (isCjkCharacter || safeCharacters.has(character));
 }
 
 function walkFiles(directory) {
@@ -68,30 +74,50 @@ function buildSubset() {
   }
 
   const sourceBuffer = fs.readFileSync(sourceFont);
-  const font = createFont(sourceBuffer);
-  const subset = font.createSubset();
   const text = collectSiteText();
-  const glyphIds = new Set();
 
-  // 仅子集化非 ASCII 字符；这份 CJK 源字体的部分 ASCII glyph 经 fontkit 子集化会异常膨胀。
-  // fontkit 输出的是 TrueType 子集；文件扩展名保持为 .ttf，避免浏览器按 woff2 误判。
-  for (const glyph of font.glyphsForString(text)) {
-    if (glyphIds.has(glyph.id)) {
-      continue;
+  if (!text) {
+    throw new Error("未收集到可用于字体子集化的字符。");
+  }
+
+  const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "oppo-font-subset-"));
+  const textFile = path.join(temporaryDirectory, "subset-text.txt");
+
+  try {
+    fs.writeFileSync(textFile, text);
+
+    const result = spawnSync(
+      "python3",
+      [
+        "-m",
+        "fontTools.subset",
+        sourceFont,
+        `--output-file=${outputFont}`,
+        "--flavor=woff2",
+        `--text-file=${textFile}`,
+        "--layout-features=*",
+        "--recommended-glyphs",
+      ],
+      {
+        encoding: "utf8",
+      },
+    );
+
+    if (result.status !== 0) {
+      throw new Error(
+        [
+          result.stderr.trim(),
+          "请先安装字体工具链：python3 -m pip install --user fonttools brotli",
+        ]
+          .filter(Boolean)
+          .join("\n"),
+      );
     }
-
-    glyphIds.add(glyph.id);
-    subset.includeGlyph(glyph);
+  } finally {
+    fs.rmSync(temporaryDirectory, { recursive: true, force: true });
   }
 
-  const outputBuffer = Buffer.from(subset.encode());
-
-  if (outputBuffer.subarray(0, 4).toString("latin1") === "true") {
-    // 浏览器更稳定识别标准 TrueType sfnt 版本号，而不是旧式 Apple "true" 标记。
-    outputBuffer.writeUInt32BE(0x00010000, 0);
-  }
-
-  fs.writeFileSync(outputFont, outputBuffer);
+  const outputBuffer = fs.readFileSync(outputFont);
 
   const reduction = 100 - (outputBuffer.byteLength / sourceBuffer.byteLength) * 100;
   console.log(
