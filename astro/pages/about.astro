@@ -1,118 +1,173 @@
 ---
+import { getEntry } from "astro:content";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 
-const experienceItems = [
-  "Independent art director and designer",
-  "Branding, advertising and visual design",
-  "Educator and founder of Panka",
-];
+const textColor = "text-[#040f4e]";
+const headingColor = "text-[#030f49]";
 
-// About 页面复用首页客户资产，保持品牌信任区与现有视觉系统一致。
-const clientLogos = [
-  { src: "/logos/logo-carlsberg.svg", width: 96, height: 38, alt: "Carlsberg" },
-  { src: "/logos/logo-momkind.svg", width: 133, height: 24, alt: "momkind" },
-  { src: "/logos/logo-roskilde-festival.svg", width: 105, height: 40, alt: "Roskilde Festival" },
-  { src: "/logos/logo-mobilepay.svg", width: 125, height: 40, alt: "MobilePay" },
-];
+const aboutEntry = await getEntry("pages", "about");
+
+if (!aboutEntry) {
+  throw new Error("Missing about page content: content/pages/about.mdx");
+}
+
+const {
+  title,
+  description,
+  name,
+  localizedName,
+  pronunciation,
+  heroImages,
+  intro,
+  experience,
+  award,
+  publications,
+  education,
+  galleryImages,
+} = aboutEntry.data;
 ---
 
 <BaseLayout
-  title="About Billy"
-  description="About Billy Wu, independent art director, designer, educator and founder of Panka."
+  title={title}
+  description={description}
 >
-  <section class="bg-blush pb-16 pt-12 md:pb-[100px] md:pt-[120px]">
-    <div class="mx-auto grid w-full max-w-site grid-cols-1 gap-12 px-4 md:grid-cols-[minmax(0,1fr)_360px] md:gap-[92px]">
-      <div class="flex flex-col">
-        <p
-          data-global-reveal-group="section-heading"
+  <article class={`bg-white font-sans ${textColor}`}>
+    <section class="mx-auto h-auto w-full max-w-[1200px] px-4 pt-16 md:h-[582px] md:px-0">
+      <div class="relative min-h-[650px] md:h-[486px] md:min-h-0">
+        <div
+          data-global-reveal-group="image"
           data-reveal-preload="true"
-          class="mb-10 font-nav text-[14px] font-medium leading-[14px] tracking-[0] text-neutral-600 md:mb-[60px]"
+          class="absolute right-0 top-0 h-[206px] w-[206px] overflow-hidden rounded-lg md:left-[971px] md:top-[304px]"
         >
-          About
-        </p>
-        <h1
-          data-global-reveal-group="hero-title"
-          data-reveal-preload="true"
-          class="max-w-[760px] text-[40px] font-bold leading-[52px] tracking-[-1.6px] text-ink md:text-[72px] md:leading-[86px] md:tracking-[-2.88px]"
-        >
-          Billy Wu is an independent art director, designer, educator and founder of
           <img
-            src="/logo-panka.svg"
-            alt="Panka"
-            width="178"
-            height="56"
-            loading="eager"
-            decoding="async"
-            class="mb-2 ml-2 inline-block h-auto w-[126px] md:mb-3 md:w-[178px]"
-          />.
-        </h1>
-      </div>
-
-      <aside
-        data-global-reveal-group="image"
-        data-reveal-preload="true"
-        class="flex flex-col md:pt-[74px]"
-      >
-        <div class="aspect-square w-[180px] overflow-hidden rounded-full bg-white md:w-[280px]">
-          <img
-            src="/billy-avatar.png"
-            alt="Billy Wu"
-            width="280"
-            height="280"
+            src={heroImages.small}
+            alt=""
+            width="206"
+            height="206"
             loading="eager"
             decoding="async"
             class="size-full object-cover"
           />
         </div>
-        <ul class="mt-10 space-y-5 font-nav text-[18px] font-medium leading-[26px] tracking-[-0.36px] text-neutral-600 md:mt-[60px] md:text-[20px] md:leading-7 md:tracking-[-0.5px]">
-          {experienceItems.map((item) => <li>{item}</li>)}
-        </ul>
-      </aside>
-    </div>
-  </section>
 
-  <section class="bg-white py-16 md:py-[100px]">
-    <div class="mx-auto grid w-full max-w-site grid-cols-1 gap-12 px-4 md:grid-cols-[270px_minmax(0,1fr)] md:gap-[130px]">
-      <div data-global-reveal-group="section-heading">
-        <h2 class="font-nav text-[20px] font-medium leading-7 tracking-[-0.5px] text-ink">
-          Profile
-        </h2>
-      </div>
-      <div class="max-w-[770px]">
-        <p class="text-[24px] font-medium leading-[36px] tracking-[-0.48px] text-neutral-600 md:text-[32px] md:leading-[48px] md:tracking-[-0.64px]">
-          With more than 10 years of experience in branding, advertising and visual design,
-          Billy works with clients who want to stand out with bold design and clever ideas.
-        </p>
-        <p class="mt-10 text-[18px] font-medium leading-8 tracking-[-0.36px] text-neutral-600 md:mt-[60px] md:text-[20px] md:leading-[34px] md:tracking-[-0.4px]">
-          The practice spans brand systems, campaign identities, editorial concepts and
-          digital-first experiences, balancing strategic clarity with expressive visual craft.
-        </p>
-      </div>
-    </div>
-  </section>
+        <div
+          data-global-reveal-group="image"
+          data-reveal-preload="true"
+          class="absolute right-[120px] top-12 h-[280px] w-[280px] overflow-hidden rounded-lg md:left-[527px] md:top-[26px] md:size-[412px]"
+        >
+          <img
+            src={heroImages.main}
+            alt=""
+            width="412"
+            height="412"
+            loading="eager"
+            decoding="async"
+            class="size-full object-cover"
+          />
+        </div>
 
-  <section class="bg-white pb-20 md:pb-[120px]">
-    <div class="mx-auto grid w-full max-w-site grid-cols-1 gap-12 border-t border-[#d9d9d9] px-4 pt-16 md:grid-cols-[270px_minmax(0,1fr)] md:gap-[130px] md:pt-[80px]">
-      <div data-global-reveal-group="section-heading">
-        <h2 class="font-nav text-[20px] font-medium leading-7 tracking-[-0.5px] text-ink">
-          Selected clients
-        </h2>
+        <div
+          data-global-reveal-group="hero-title"
+          data-reveal-preload="true"
+          class="absolute left-0 top-[350px] md:top-[127px]"
+        >
+          <h1 class={`${headingColor} text-[64px] font-normal leading-[76.8px] tracking-[-2.4px] md:text-[96px] md:leading-[115.2px] md:tracking-[-3.6px]`}>
+            {name}<br />{localizedName}
+          </h1>
+          <p class={`${headingColor} ml-[220px] mt-[-39px] text-[18px] font-normal leading-[28.8px] tracking-[-0.15px] md:ml-[304px] md:text-[24px] md:leading-[38.4px] md:tracking-[-0.2px]`}>
+            {pronunciation}
+          </p>
+        </div>
       </div>
-      <ul class="grid grid-cols-2 items-center gap-x-12 gap-y-12 md:grid-cols-4 md:gap-x-[64px]">
-        {clientLogos.map((logo) => (
-          <li class="flex min-h-14 items-center">
+    </section>
+
+    <div class="mx-auto w-full max-w-[1088px] px-4 pb-24 pt-[87px] md:px-0 md:pb-[88px]">
+      <section class="grid gap-8 md:grid-cols-[96px_768px] md:justify-center md:gap-10">
+        <h2 class="text-[18px] font-normal leading-[28.8px]">{intro.label}</h2>
+        <div class="max-w-[768px] space-y-[16px] text-[18px] font-normal leading-[28.8px]">
+          <p>{intro.paragraphs[0]}</p>
+          <p>
+            {intro.paragraphs[1]} <strong class="font-bold">{intro.highlight}</strong>{" "}
+            {intro.paragraphs[2]}
+          </p>
+          <p>{intro.paragraphs[3]}</p>
+        </div>
+      </section>
+
+      <section class="mt-[80px] grid gap-8 md:grid-cols-[96px_768px] md:justify-center md:gap-10">
+        <h2 class="text-[18px] font-normal leading-[28.8px]">{experience.label}</h2>
+        <div class="max-w-[768px] space-y-10">
+          {experience.items.map((item) => (
+            <section class="text-[18px] font-normal leading-[28.8px]">
+              <h3 class={`${headingColor} text-[18px] font-semibold leading-[25.2px]`}>
+                {item.title}
+              </h3>
+              <p class="mt-0">{item.period}</p>
+              {item.paragraphs?.map((paragraph, index) => (
+                <p class={index === 0 ? "mt-[10px]" : "mt-[16px]"}>{paragraph}</p>
+              ))}
+            </section>
+          ))}
+        </div>
+      </section>
+
+      <section class="mt-[80px] grid gap-8 md:grid-cols-[96px_768px] md:justify-center md:gap-10">
+        <h2 class="text-[18px] font-normal leading-[28.8px]">{award.label}</h2>
+        <div class="max-w-[768px] text-[18px] font-normal leading-[28.8px]">
+          <h3 class={`${headingColor} text-[18px] font-semibold leading-[25.2px]`}>
+            {award.title}
+          </h3>
+          <p>{award.period}</p>
+          <p class="mt-[10px]">{award.description}</p>
+        </div>
+      </section>
+
+      <section class="mt-[80px] grid gap-8 md:grid-cols-[96px_768px] md:justify-center md:gap-10">
+        <h2 class="text-[18px] font-normal leading-[28.8px]">
+          {publications.label.split("\n").map((line) => (
+            <>{line}<br /></>
+          ))}
+        </h2>
+        <div class="max-w-[768px] space-y-8 text-[18px] font-normal leading-[28.8px]">
+          {publications.items.map((item) => (
+            <section>
+              <h3 class={`${headingColor} text-[18px] font-semibold leading-[25.2px]`}>
+                {item.title}
+              </h3>
+              <p class="mt-[9px]">{item.meta}</p>
+            </section>
+          ))}
+        </div>
+      </section>
+
+      <section class="mt-[80px] grid gap-8 md:grid-cols-[96px_768px] md:justify-center md:gap-10">
+        <h2 class="text-[18px] font-normal leading-[28.8px]">{education.label}</h2>
+        <div class="max-w-[768px] space-y-8 text-[18px] font-normal leading-[28.8px]">
+          {education.items.map((item) => (
+            <section>
+              <p>{item.year}</p>
+              <p class={`${headingColor} mt-[10px]`}>{item.school}</p>
+              {item.note ? <p>{item.note}</p> : null}
+            </section>
+          ))}
+        </div>
+      </section>
+
+      <section class="mt-[80px] grid grid-cols-2 gap-[28px] md:grid-cols-4 md:gap-[60px]">
+        {galleryImages.map((src, index) => (
+          <div class="aspect-square overflow-hidden rounded-lg">
             <img
-              src={logo.src}
-              alt={logo.alt}
-              width={logo.width}
-              height={logo.height}
-              loading="lazy"
+              src={src}
+              alt=""
+              width="227"
+              height="227"
+              loading={index < 4 ? "eager" : "lazy"}
               decoding="async"
-              class="max-h-14 w-auto opacity-30"
+              class="size-full object-cover"
             />
-          </li>
+          </div>
         ))}
-      </ul>
+      </section>
     </div>
-  </section>
+  </article>
 </BaseLayout>

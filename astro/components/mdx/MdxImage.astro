@@ -3,12 +3,48 @@ const knownImageSizes: Record<string, { width: number; height: number }> = {
   "/images/ai-design-workflow.svg": { width: 1200, height: 860 },
   "/images/design-trends-2026.svg": { width: 1200, height: 860 },
   "/images/prompt-library.svg": { width: 1200, height: 860 },
+  "/images/articles/chinese-font-history/cover.png": { width: 1260, height: 420 },
+  "/images/articles/chinese-font-history/figure-01.png": { width: 800, height: 462 },
+  "/images/articles/chinese-font-history/figure-02.png": { width: 800, height: 969 },
+  "/images/articles/chinese-font-history/figure-03.png": { width: 800, height: 422 },
+  "/images/articles/chinese-font-history/figure-04.png": { width: 800, height: 423 },
+  "/images/articles/chinese-font-history/figure-05.png": { width: 800, height: 429 },
+  "/images/articles/chinese-font-history/figure-06.png": { width: 800, height: 1081 },
+  "/images/articles/chinese-font-history/figure-07.png": { width: 800, height: 544 },
+  "/images/articles/chinese-font-history/figure-08.png": { width: 800, height: 442 },
+  "/images/articles/chinese-font-history/figure-09.png": { width: 800, height: 442 },
+  "/images/articles/chinese-font-history/figure-10.png": { width: 800, height: 442 },
+  "/images/articles/chinese-font-history/figure-11.png": { width: 800, height: 895 },
+  "/images/articles/chinese-font-history/figure-12.png": { width: 800, height: 1099 },
+  "/images/articles/chinese-font-history/figure-13.png": { width: 800, height: 442 },
+  "/images/articles/chinese-font-history/figure-14.png": { width: 800, height: 442 },
+  "/images/articles/chinese-font-history/figure-15.png": { width: 800, height: 442 },
+  "/images/articles/chinese-font-history/figure-16.png": { width: 800, height: 458 },
+  "/images/articles/chinese-font-history/figure-17.png": { width: 800, height: 615 },
+  "/images/articles/chinese-font-history/figure-18.png": { width: 800, height: 1134 },
+  "/images/articles/chinese-font-history/figure-19.png": { width: 800, height: 544 },
+  "/images/articles/chinese-font-history/figure-20.png": { width: 800, height: 494 },
+  "/images/articles/chinese-font-history/figure-21.png": { width: 800, height: 494 },
+  "/images/articles/chinese-font-history/figure-22.png": { width: 800, height: 494 },
+  "/images/articles/chinese-font-history/figure-23.png": { width: 800, height: 973 },
+  "/images/articles/chinese-font-history/figure-24.png": { width: 800, height: 544 },
+  "/images/articles/chinese-font-history/figure-25.png": { width: 800, height: 494 },
+  "/images/articles/chinese-font-history/figure-26.png": { width: 800, height: 494 },
+  "/images/articles/chinese-font-history/figure-27.png": { width: 800, height: 494 },
+  "/images/articles/chinese-font-history/figure-28.png": { width: 800, height: 494 },
 };
+
+const priorityImageSources = new Set([
+  "/images/ai-design-workflow.svg",
+  "/images/design-trends-2026.svg",
+  "/images/prompt-library.svg",
+]);
 
 const { class: className, src, alt = "", ...attrs } = Astro.props;
 const imageSize = typeof src === "string" ? knownImageSizes[src] : undefined;
-const loading = attrs.loading ?? (imageSize ? "eager" : "lazy");
-const fetchPriority = attrs.fetchpriority ?? (imageSize ? "high" : undefined);
+const isPriorityImage = typeof src === "string" && priorityImageSources.has(src);
+const loading = attrs.loading ?? (isPriorityImage ? "eager" : "lazy");
+const fetchPriority = attrs.fetchpriority ?? (isPriorityImage ? "high" : undefined);
 ---
 
 <span
