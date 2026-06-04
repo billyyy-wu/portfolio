@@ -153,6 +153,51 @@ order: 1
 
 删除作品时，直接删除对应的 `.mdx` 文件即可。
 
+## 编辑 About 页面
+
+About 页面内容由下面这个 MDX 文件的 frontmatter 驱动：
+
+```text
+content/pages/about.mdx
+```
+
+对应线上页面：
+
+```text
+/about
+```
+
+常用字段：
+
+- `title`：页面标题。
+- `description`：页面 SEO 描述。
+- `name`、`localizedName`、`pronunciation`：首屏姓名和发音信息。
+- `heroImages.main`、`heroImages.small`：首屏主图和小图。
+- `intro`：简介区，包括标签、段落和高亮句。
+- `experience.items`：经历列表，每项包含 `title`、`period`，可选 `paragraphs`。
+- `award`：奖项区。
+- `publications.items`：研究/出版列表。
+- `education.items`：教育经历。
+- `galleryImages`：About 页底部图片列表。
+
+About 页面图片优先放在：
+
+```text
+public/images/about/
+```
+
+然后在 `content/pages/about.mdx` 中使用站内路径引用：
+
+```yaml
+heroImages:
+  main: "/images/about/elly-hero-main.webp"
+  small: "/images/about/elly-hero-small.webp"
+galleryImages:
+  - "/images/about/elly-gallery-01.webp"
+```
+
+如果通过 TinaCMS 后台编辑 About 页面，保存后 TinaCloud 会把 `content/pages/about.mdx` 和上传的图片写回 GitHub；如果本地直接编辑，保存文件后按下方 Git 流程提交即可。
+
 ## 使用本地图片
 
 把图片放到 `public/` 目录下，例如：
