@@ -74,11 +74,10 @@ export default defineConfig({
             type: "string",
             label: "Date",
             name: "date",
-            required: true,
-            description: "保持 YYYY-MM-DD 格式，避免影响现有排序和日期展示。",
+            description: "可选；填写时使用 YYYY-MM-DD 格式，用于未设置 order 的文章排序。",
             ui: {
               validate: (value) =>
-                /^\d{4}-\d{2}-\d{2}$/.test(value || "")
+                !value || /^\d{4}-\d{2}-\d{2}$/.test(value)
                   ? undefined
                   : "请使用 YYYY-MM-DD 格式。",
             },

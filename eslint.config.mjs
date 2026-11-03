@@ -5,6 +5,7 @@ const eslintConfig = tseslint.config(
   {
     ignores: [
       ".astro/**",
+      ".vercel/**",
       "dist/**",
       "node_modules/**",
       "out/**",

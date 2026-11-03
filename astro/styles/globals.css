@@ -77,6 +77,7 @@ html[data-reveal-pending] footer {
   transition:
     opacity var(--reveal-opacity-duration) var(--reveal-opacity-ease),
     transform var(--reveal-transform-duration) var(--reveal-transform-ease);
+  transition-delay: var(--reveal-delay, 0ms);
 }
 
 [data-global-reveal="hero-action"]:not(.is-visible),
@@ -207,45 +208,6 @@ html[data-reveal-pending] footer {
 
 .article-design__content {
   margin-top: 60px;
-}
-
-.article-design__meta {
-  margin-top: 80px;
-  padding-top: 80px;
-}
-
-.article-design__meta p {
-  color: #525252;
-  font-size: 20px;
-  font-weight: 500;
-  letter-spacing: 0;
-  line-height: 28px;
-}
-
-.article-design__contributors {
-  margin-top: 40px;
-  padding: 40px 0;
-}
-
-.article-design__contributors-label {
-  color: #525252;
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0;
-  line-height: 17px;
-}
-
-.article-design__contributor-card {
-  margin: 30px auto 0;
-  width: 92px;
-}
-
-.article-design__contributor-card p {
-  margin-top: 11px;
-  color: #525252;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 17px;
 }
 
 .article-body {
@@ -516,7 +478,8 @@ html[data-reveal-pending] footer {
   .route-transition-panel {
     display: block;
     height: 100%;
-    width: 100%;
+    /* 相邻分栏重叠 2px，避免缩放合成时的小数像素接缝露出底层内容。 */
+    width: calc(100% + 2px);
     transform: scaleX(0);
     transform-origin: left;
     background: #ffffff;

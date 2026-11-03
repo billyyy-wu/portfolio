@@ -34,7 +34,7 @@ npm run dev:cms
 http://localhost:4321/admin/index.html
 ```
 
-`dev:cms` 会显式启用 Tina Astro integration；普通 `dev` 和公开站点构建不启用这层桥接代码，避免访客页面携带未使用的后台脚本。
+`dev:cms` 会启用 Tina Astro integration。若 4321 已被占用，请以终端显示的端口为准。普通 `dev` 和未配置 TinaCloud 的公开站点构建不会启用编辑桥接。
 
 部署前可以本地构建检查：
 
@@ -83,12 +83,14 @@ tina/config.ts       TinaCMS 后台内容模型和图片上传配置
 
 后台用于编辑 `content/articles/*.mdx` 和 `content/pages/about.mdx`，支持修改 frontmatter、正文内容和上传图片。上传的图片会进入仓库内对应目录：
 
+进入 Articles 或 Pages 后选择文档，左侧是编辑表单，右侧是对应页面的实时预览。标题、正文、图片等字段的未保存修改会立即显示在右侧；保存后才会写入 MDX 文件。本地可直接打开 `/admin/index.html#/~/articles/chinese-font-history` 测试文章预览。
+
 ```text
 public/images/articles/
 public/images/about/
 ```
 
-线上保存逻辑是 TinaCloud 写入 GitHub，随后 Vercel 自动重新部署。普通访客页面不会显示后台入口，也不会加载 Tina 编辑器代码。
+线上保存逻辑是 TinaCloud 写入 GitHub，随后 Vercel 自动重新部署。实时预览通过 Vercel 的按需接口刷新页面区域；普通访客页面不会显示后台入口，也不会加载 Tina 编辑器代码。
 
 未配置 TinaCloud 环境变量时，构建脚本会删除本地开发版 `public/admin/` 和 `dist/admin/`，避免把引用 `localhost` 的后台入口发布出去。
 
@@ -127,7 +129,6 @@ content/articles/my-new-work.mdx
 ```mdx
 ---
 title: "作品标题"
-date: "2026-05-26"
 description: "首页卡片和 SEO 中显示的作品简介。"
 cover: "/images/articles/my-new-work.webp"
 coverAlt: "封面图的文字描述。"
@@ -144,7 +145,7 @@ order: 1
 字段说明：
 
 - `title`：首页卡片标题和详情页标题。
-- `date`：文章日期，建议使用 `YYYY-MM-DD` 格式。
+- `date`：可选，仅用于未设置 `order` 时按日期排序，建议使用 `YYYY-MM-DD` 格式；详情页不显示日期。
 - `description`：首页卡片简介和页面 SEO 描述。
 - `cover`：首页卡片封面图，优先使用 `/public` 下的本地图片路径，例如 `/images/articles/my-new-work.webp`。
 - `coverAlt`：封面图的可访问性描述。

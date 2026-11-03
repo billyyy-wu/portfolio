@@ -42,7 +42,7 @@ function getCoverRatio(slug: string) {
   return Number(match[2]) / Number(match[1]);
 }
 
-export function getArticleCoverDimensions(article: ArticleEntry) {
+export function getArticleCoverDimensions(article: Pick<ArticleEntry, "id">) {
   const aspectClass = coverAspectBySlug[article.id] ?? "aspect-[1260/420]";
   const match = aspectClass.match(/aspect-\[([\d.]+)\/([\d.]+)\]/);
 
@@ -108,7 +108,8 @@ export function sortArticles(articles: ArticleEntry[]) {
       return (a.data.order ?? Number.POSITIVE_INFINITY) - (b.data.order ?? Number.POSITIVE_INFINITY);
     }
 
-    return new Date(b.data.date).getTime() - new Date(a.data.date).getTime();
+    return (b.data.date ? new Date(b.data.date).getTime() : 0) -
+      (a.data.date ? new Date(a.data.date).getTime() : 0);
   });
 }
 

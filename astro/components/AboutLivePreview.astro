@@ -1,0 +1,8 @@
+---
+import AboutView from "~/components/AboutView.astro";
+import type { TinaPage } from "~/lib/tina-preview";
+
+const { page } = Astro.props as { page: TinaPage };
+---
+
+<AboutView page={page} />

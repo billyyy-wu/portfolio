@@ -1,0 +1,45 @@
+---
+import { getArticleCoverDimensions } from "~/lib/articles";
+import type { TinaArticle } from "~/lib/tina-preview";
+
+interface Props {
+  article: TinaArticle;
+  slug: string;
+}
+
+const { article, slug } = Astro.props;
+const coverDimensions = getArticleCoverDimensions({ id: slug });
+---
+
+<article class="article-design mx-auto w-full px-4">
+  <header class="article-design__header mx-auto w-full max-w-[1260px] text-center">
+    <div class="mx-auto w-full max-w-[800px]">
+      <h1 class="article-design__title text-ink">{article.title}</h1>
+      <div class="article-design__divider mx-auto" aria-hidden="true"></div>
+      <p class="article-design__category uppercase">Design</p>
+    </div>
+
+    <p class="article-design__description mx-auto max-w-[800px] text-neutral-600">{article.description}</p>
+
+    {article.cover ? (
+      <figure class="article-design__cover">
+        <img
+          src={article.cover}
+          alt={article.coverAlt ?? article.title}
+          width={coverDimensions.width}
+          height={coverDimensions.height}
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+          class="block h-auto w-full"
+        />
+      </figure>
+    ) : null}
+  </header>
+
+  <div class="article-design__content mx-auto w-full max-w-[800px]">
+    <div class="article-body">
+      <slot />
+    </div>
+  </div>
+</article>

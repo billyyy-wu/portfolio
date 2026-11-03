@@ -1,9 +1,10 @@
 ---
 import { getCollection, render } from "astro:content";
+import TinaIsland from "@tinacms/astro/TinaIsland.astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
+import ArticleView from "~/components/ArticleView.astro";
 import MdxAnchor from "~/components/mdx/MdxAnchor.astro";
 import MdxImage from "~/components/mdx/MdxImage.astro";
-import { getArticleCoverDimensions } from "~/lib/articles";
 
 export async function getStaticPaths() {
   const articles = await getCollection("articles");
@@ -16,10 +17,7 @@ export async function getStaticPaths() {
 
 const { article } = Astro.props;
 const { Content } = await render(article);
-const coverDimensions = getArticleCoverDimensions(article);
-const formattedDate = new Intl.DateTimeFormat("en", {
-  dateStyle: "medium",
-}).format(new Date(article.data.date));
+const enableVisualEditing = process.env.TINA_ENABLED === "true" || Boolean(process.env.NEXT_PUBLIC_TINA_CLIENT_ID);
 ---
 
 <BaseLayout
@@ -27,60 +25,15 @@ const formattedDate = new Intl.DateTimeFormat("en", {
   description={article.data.description}
   image={article.data.cover}
 >
-  <article class="article-design mx-auto w-full px-4">
-    <header class="article-design__header mx-auto w-full max-w-[1260px] text-center">
-      <div class="mx-auto w-full max-w-[800px]">
-        <h1 class="article-design__title text-ink">
-          {article.data.title}
-        </h1>
-        <div class="article-design__divider mx-auto" aria-hidden="true"></div>
-        <p class="article-design__category uppercase">Design</p>
-      </div>
-
-      <p class="article-design__description mx-auto max-w-[800px] text-neutral-600">
-        {article.data.description}
-      </p>
-
-      {article.data.cover ? (
-        <figure class="article-design__cover">
-          <img
-            src={article.data.cover}
-            alt={article.data.coverAlt ?? article.data.title}
-            width={coverDimensions.width}
-            height={coverDimensions.height}
-            loading="eager"
-            fetchpriority="high"
-            decoding="async"
-            class="block h-auto w-full"
-          />
-        </figure>
-      ) : null}
-    </header>
-
-    <div class="article-design__content mx-auto w-full max-w-[800px]">
-      <div class="article-body">
+  {enableVisualEditing ? (
+    <TinaIsland name="article" params={{ slug: article.id }} wrapper={{ tag: "div" }} primary>
+      <ArticleView article={article.data} slug={article.id}>
         <Content components={{ a: MdxAnchor, img: MdxImage }} />
-      </div>
-    </div>
-
-    <footer class="article-design__meta mx-auto w-full max-w-[944px]">
-      <p>{formattedDate}</p>
-    </footer>
-
-    <div class="article-design__contributors mx-auto w-full max-w-[984px] text-center">
-      <p class="article-design__contributors-label uppercase">Contributors</p>
-      <div class="article-design__contributor-card">
-        <img
-          src="/billy-avatar.png"
-          alt=""
-          width="90"
-          height="90"
-          loading="lazy"
-          decoding="async"
-          class="mx-auto size-[90px] rounded-full object-cover"
-        />
-        <p>johnsonjin</p>
-      </div>
-    </div>
-  </article>
+      </ArticleView>
+    </TinaIsland>
+  ) : (
+    <ArticleView article={article.data} slug={article.id}>
+      <Content components={{ a: MdxAnchor, img: MdxImage }} />
+    </ArticleView>
+  )}
 </BaseLayout>

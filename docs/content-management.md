@@ -34,7 +34,6 @@ content/articles/my-new-work.mdx
 ```mdx
 ---
 title: "My New Work"
-date: "2026-05-26"
 description: "首页卡片中显示的一句话简介。"
 cover: "/images/articles/my-new-work.webp"
 coverAlt: "封面图的可访问性描述。"
@@ -77,7 +76,7 @@ order: 1
 
 - `order` 数字越小，首页越靠前。
 - 没有填写 `order` 的文章会排在填写了 `order` 的文章后面。
-- 如果所有文章都不写 `order`，则默认按 `date` 倒序排列。
+- 未设置 `order` 的文章按 `date` 倒序排列；没有 `date` 的文章排在最后。
 
 ## 必填字段
 
@@ -86,7 +85,6 @@ order: 1
 ```mdx
 ---
 title: "文章标题"
-date: "2026-05-26"
 description: "文章简介"
 cover: "封面图地址"
 coverAlt: "封面图描述"
@@ -96,7 +94,7 @@ coverAlt: "封面图描述"
 字段说明：
 
 - `title`：首页卡片标题和详情页标题。
-- `date`：文章日期，格式建议使用 `YYYY-MM-DD`。
+- `date`：可选，仅用于未设置 `order` 时排序，建议使用 `YYYY-MM-DD` 格式；详情页不显示日期。
 - `description`：首页卡片简介和 SEO 描述。
 - `cover`：首页卡片封面图，优先使用 `/public` 下的本地图片路径。
 - `coverAlt`：封面图描述，建议填写。
@@ -143,6 +141,8 @@ http://localhost:4321/admin/index.html
 ```
 
 后台可编辑 `content/articles/*.mdx` 和 `content/pages/about.mdx`。文章图片会保存到 `public/images/articles/`，about 图片会保存到 `public/images/about/`。线上保存后，TinaCloud 会把 MDX 和图片写入 GitHub，Vercel 随后自动重新部署。
+
+选择文章或 About 文档后，左侧表单编辑，右侧实时预览。未保存的更改只出现在预览里，点击保存后才会写回文件。若本地端口不是 4321，请使用终端显示的端口。
 
 线上后台需要配置：
 

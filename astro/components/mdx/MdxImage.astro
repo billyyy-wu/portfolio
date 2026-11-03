@@ -156,7 +156,8 @@ function readPublicImageSize(src: string): ImageSize | undefined {
   }
 }
 
-const { class: className, src, alt = "", ...attrs } = Astro.props;
+const { class: className, src: imageSrc, url, caption, alt = "", ...attrs } = Astro.props;
+const src = imageSrc ?? url;
 const imageSize = typeof src === "string" ? readPublicImageSize(src) : undefined;
 const isPriorityImage = typeof src === "string" && priorityImageSources.has(src);
 const loading = attrs.loading ?? (isPriorityImage ? "eager" : "lazy");

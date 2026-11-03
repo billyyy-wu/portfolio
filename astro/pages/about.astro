@@ -1,174 +1,20 @@
 ---
 import { getEntry } from "astro:content";
+import TinaIsland from "@tinacms/astro/TinaIsland.astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
-
-const textColor = "text-[#040f4e]";
-const headingColor = "text-[#030f49]";
+import AboutView from "~/components/AboutView.astro";
 
 const aboutEntry = await getEntry("pages", "about");
-
-if (!aboutEntry) {
-  throw new Error("Missing about page content: content/pages/about.mdx");
-}
-
-const {
-  title,
-  description,
-  name,
-  localizedName,
-  pronunciation,
-  heroImages,
-  intro,
-  experience,
-  award,
-  publications,
-  education,
-  galleryImages,
-} = aboutEntry.data;
-const [introOpening, introBeforeHighlight, introAfterHighlight, introClosing] = intro.paragraphs;
+if (!aboutEntry) throw new Error("Missing about page content: content/pages/about.mdx");
+const enableVisualEditing = process.env.TINA_ENABLED === "true" || Boolean(process.env.NEXT_PUBLIC_TINA_CLIENT_ID);
 ---
 
-<BaseLayout
-  title={title}
-  description={description}
->
-  <article class={`bg-white font-sans ${textColor}`}>
-    <section class="mx-auto h-auto w-full max-w-[1200px] px-4 pt-16 md:h-[582px] md:px-0">
-      <div class="grid gap-4 md:relative md:block md:h-[486px]">
-        <div
-          data-global-reveal-group="image"
-          data-reveal-preload="true"
-          class="order-2 h-[176px] w-[176px] justify-self-end overflow-hidden rounded-lg md:absolute md:left-[971px] md:top-[304px] md:h-[206px] md:w-[206px]"
-        >
-          <img
-            src={heroImages.small}
-            alt=""
-            width="206"
-            height="206"
-            loading="eager"
-            decoding="async"
-            class="size-full object-cover"
-          />
-        </div>
-
-        <div
-          data-global-reveal-group="image"
-          data-reveal-preload="true"
-          class="order-1 h-[280px] w-[280px] justify-self-end overflow-hidden rounded-lg md:absolute md:left-[527px] md:top-[26px] md:size-[412px]"
-        >
-          <img
-            src={heroImages.main}
-            alt=""
-            width="412"
-            height="412"
-            loading="eager"
-            decoding="async"
-            class="size-full object-cover"
-          />
-        </div>
-
-        <div
-          data-global-reveal-group="hero-title"
-          data-reveal-preload="true"
-          class="order-3 mt-4 md:absolute md:left-0 md:top-[127px] md:mt-0"
-        >
-          <h1 class={`${headingColor} text-[56px] font-normal leading-[67.2px] tracking-normal sm:text-[64px] sm:leading-[76.8px] md:text-[96px] md:leading-[115.2px]`}>
-            {name}<br />{localizedName}
-          </h1>
-          <p class={`${headingColor} ml-[160px] mt-[-32px] text-[18px] font-normal leading-[28.8px] tracking-normal sm:ml-[220px] sm:mt-[-39px] md:ml-[304px] md:text-[24px] md:leading-[38.4px]`}>
-            {pronunciation}
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <div class="mx-auto w-full max-w-[1088px] px-4 pb-24 pt-[87px] md:px-0 md:pb-[88px]">
-      <section class="grid gap-8 md:grid-cols-[96px_768px] md:justify-center md:gap-10">
-        <h2 class="text-[18px] font-normal leading-[28.8px]">{intro.label}</h2>
-        <div class="max-w-[768px] space-y-[16px] text-[18px] font-normal leading-[28.8px]">
-          <p>{introOpening}</p>
-          <p>
-            {introBeforeHighlight} <strong class="font-bold">{intro.highlight}</strong>{" "}
-            {introAfterHighlight}
-          </p>
-          <p>{introClosing}</p>
-        </div>
-      </section>
-
-      <section class="mt-[80px] grid gap-8 md:grid-cols-[96px_768px] md:justify-center md:gap-10">
-        <h2 class="text-[18px] font-normal leading-[28.8px]">{experience.label}</h2>
-        <div class="max-w-[768px] space-y-10">
-          {experience.items.map((item) => (
-            <section class="text-[18px] font-normal leading-[28.8px]">
-              <h3 class={`${headingColor} text-[18px] font-semibold leading-[25.2px]`}>
-                {item.title}
-              </h3>
-              <p class="mt-0">{item.period}</p>
-              {item.paragraphs?.map((paragraph, index) => (
-                <p class={index === 0 ? "mt-[10px]" : "mt-[16px]"}>{paragraph}</p>
-              ))}
-            </section>
-          ))}
-        </div>
-      </section>
-
-      <section class="mt-[80px] grid gap-8 md:grid-cols-[96px_768px] md:justify-center md:gap-10">
-        <h2 class="text-[18px] font-normal leading-[28.8px]">{award.label}</h2>
-        <div class="max-w-[768px] text-[18px] font-normal leading-[28.8px]">
-          <h3 class={`${headingColor} text-[18px] font-semibold leading-[25.2px]`}>
-            {award.title}
-          </h3>
-          <p>{award.period}</p>
-          <p class="mt-[10px]">{award.description}</p>
-        </div>
-      </section>
-
-      <section class="mt-[80px] grid gap-8 md:grid-cols-[96px_768px] md:justify-center md:gap-10">
-        <h2 class="text-[18px] font-normal leading-[28.8px]">
-          {publications.label.split("\n").map((line) => (
-            <>{line}<br /></>
-          ))}
-        </h2>
-        <div class="max-w-[768px] space-y-8 text-[18px] font-normal leading-[28.8px]">
-          {publications.items.map((item) => (
-            <section>
-              <h3 class={`${headingColor} text-[18px] font-semibold leading-[25.2px]`}>
-                {item.title}
-              </h3>
-              <p class="mt-[9px]">{item.meta}</p>
-            </section>
-          ))}
-        </div>
-      </section>
-
-      <section class="mt-[80px] grid gap-8 md:grid-cols-[96px_768px] md:justify-center md:gap-10">
-        <h2 class="text-[18px] font-normal leading-[28.8px]">{education.label}</h2>
-        <div class="max-w-[768px] space-y-8 text-[18px] font-normal leading-[28.8px]">
-          {education.items.map((item) => (
-            <section>
-              <p>{item.year}</p>
-              <p class={`${headingColor} mt-[10px]`}>{item.school}</p>
-              {item.note ? <p>{item.note}</p> : null}
-            </section>
-          ))}
-        </div>
-      </section>
-
-      <section class="mt-[80px] grid grid-cols-2 gap-[28px] md:grid-cols-4 md:gap-[60px]">
-        {galleryImages.map((src) => (
-          <div class="aspect-square overflow-hidden rounded-lg">
-            <img
-              src={src}
-              alt=""
-              width="227"
-              height="227"
-              loading="lazy"
-              decoding="async"
-              class="size-full object-cover"
-            />
-          </div>
-        ))}
-      </section>
-    </div>
-  </article>
+<BaseLayout title={aboutEntry.data.title} description={aboutEntry.data.description}>
+  {enableVisualEditing ? (
+    <TinaIsland name="about" wrapper={{ tag: "div" }} primary>
+      <AboutView page={aboutEntry.data} />
+    </TinaIsland>
+  ) : (
+    <AboutView page={aboutEntry.data} />
+  )}
 </BaseLayout>

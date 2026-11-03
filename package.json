@@ -23,11 +23,13 @@
   "license": "ISC",
   "dependencies": {
     "@astrojs/mdx": "^6.0.1",
+    "@astrojs/vercel": "^10.0.8",
     "@tinacms/astro": "^0.4.0",
     "astro": "^6.4.2",
     "tinacms": "^3.8.4"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.12",
     "@tailwindcss/typography": "^0.5.19",
     "@tinacms/cli": "^2.4.2",
     "@types/node": "^25.9.1",
