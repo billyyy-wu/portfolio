@@ -393,6 +393,11 @@
 
     overlay.classList.toggle("is-reduced-motion", prefersReducedMotion);
 
+    // 浏览器从往返缓存恢复页面时不会重新执行初始化，需撤销离开前的白色遮罩。
+    window.addEventListener("pageshow", () => {
+      overlay.classList.remove("is-covering");
+    });
+
     document.addEventListener(
       "click",
       (event) => {
